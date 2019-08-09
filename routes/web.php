@@ -10,7 +10,14 @@
 | and give it the Closure to call when that URI is requested.
 |
 */
+$app->get('send','ExampleController@sendMail');
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
+$app->post('login','AuthController@login');
+$app->group(['prefix'=>'/','middleware'=>'auth:api'],function () use ($app){
+    $app->post('logout','AuthController@logout');
+    $app->post('refresh','AuthController@refreshToken');
 });
+
+
+
+

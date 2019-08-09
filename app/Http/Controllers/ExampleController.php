@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Mail;
+
 class ExampleController extends Controller
 {
     /**
@@ -13,6 +15,4 @@ class ExampleController extends Controller
     {
         //
     }
-
-    //
 }
