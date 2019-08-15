@@ -3,15 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Auth\Authenticatable;
-use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Laravel\Lumen\Auth\Authorizable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Model implements AuthenticatableContract, AuthorizableContract
+class User extends Model implements AuthenticatableContract, AuthorizableContract, JWTSubject
 {
-    protected $table = 'user';
     use Authenticatable, Authorizable;
+
+    protected $table = 'users';
 
     /**
      * The attributes that are mass assignable.
@@ -19,7 +21,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'name', 'email',
+        'username', 'email',
     ];
 
     /**
