@@ -12,7 +12,9 @@
 */
 $app->get('send','ExampleController@sendMail');
 
+$app->post('test','ExampleController@test');
 $app->post('login','AuthController@login');
+$app->post('register','UserController@addUser');
 $app->group(['prefix'=>'/','middleware'=>'auth:api'],function () use ($app){
     $app->post('logout','AuthController@logout');
     $app->post('refresh','AuthController@refreshToken');
