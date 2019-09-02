@@ -25,7 +25,7 @@ class AuthController extends Controller
                 ->where('password', md5($request->input('password')))->first();
             if (!$user) {
                 $response['code'] = '5001';
-                $response['message'] = '账户名或者';
+                $response['message'] = '账户名或者密码错误';
             } else if (!$token = Auth::login($user)) {
                 $response['code'] = '5000';
                 $response['message'] = '系统错误，无法生成令牌';

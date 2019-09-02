@@ -11,6 +11,9 @@
 |
 */
 $app->get('send','ExampleController@sendMail');
+$app->get('/',function () {
+
+});
 
 $app->post('test','ExampleController@test');
 $app->post('login','AuthController@login');
