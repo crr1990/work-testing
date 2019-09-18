@@ -49,7 +49,6 @@ class UserInfoService
             try{
                 (new NoticeService())->sendMail($password, $user);
             }catch(Exception $e) {
-
             }
         }
 
