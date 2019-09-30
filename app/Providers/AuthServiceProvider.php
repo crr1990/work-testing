@@ -26,8 +26,7 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         // 当使用auth中间件的api门卫的时候验证请求体
-        $this->app['auth']->viaRequest('api', function ($request)
-        {
+        $this->app['auth']->viaRequest('api', function ($request) {
             return app('auth')->setRequest($request)->user();
         });
     }

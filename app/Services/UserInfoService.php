@@ -3,11 +3,8 @@
 namespace App\Services;
 
 use App\Models\User;
-use function FastRoute\cachedDispatcher;
-use function GuzzleHttp\Psr7\try_fopen;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 use Mockery\Exception;
 
 /**
@@ -38,7 +35,7 @@ class UserInfoService
 
         $user = [
             "name" => $name,
-            "allow_capacity" => $allowCapacity,
+            "allow_capacity" => $allowCapacity * 1024 * 1024,
             "email" => $email,
             "password" => md5($password),
             "desc" => $desc

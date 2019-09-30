@@ -14,4 +14,16 @@ class OrderController
     //工单的创建
     //工单的删除
     //工单的编辑
+
+    //工单执行
+    function do() {
+        \HttpUrlUrl::get();
+    }
+
+
+    function createOrder() {
+
+    }
+
+
 }

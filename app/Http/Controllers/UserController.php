@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
+    public function list(Request $request) {
+        var_dump($request->all());
+    }
+
     /**
      * 增加用户
      *
