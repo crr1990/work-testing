@@ -15,8 +15,26 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    public function list(Request $request) {
-        var_dump($request->all());
+    /**
+     * 用户列表
+     *
+     * @param Request $request
+     * @param UserInfoService $service
+     * @return \Illuminate\Http\JsonResponse
+     *
+     */
+    public function userList(Request $request, UserInfoService $service)
+    {
+
+        $filter = $request->all();
+        $page = $request->input("currentPage", 1);
+        $res = $service->userList($filter, 20, ($page - 1) * 20, $page);
+
+        return response()->json([
+            "code" => $res['code'],
+            "message" => $res['msg'],
+            "data" => $res['data']
+        ]);
     }
 
     /**

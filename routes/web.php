@@ -19,12 +19,12 @@ $app->get('/', function () {
 $app->post('test', 'ExampleController@test');
 $app->post('login', 'UserController@login');
 $app->post('upload', 'UploadController@upload');
-$app->group(['prefix' => '/user', 'middleware' => 'auth:api'], function () use ($app) {
+$app->group(['prefix' => 'user', 'middleware' => 'auth:api'], function () use ($app) {
 //$app->group(['prefix'=>'user'],function () use ($app){
     $app->post('logout', 'AuthController@logout');
     $app->post('refresh', 'AuthController@refreshToken');
     $app->post('register', 'UserController@addUser');
-    $app->post('list', 'UserController@list');
+    $app->post('list', 'UserController@userList');
 });
 
 
@@ -34,6 +34,13 @@ $app->post('orderTemplate/delete', 'OrderTemplateController@deleteTemp');
 $app->post('orderTemplate/editParam', 'OrderTemplateController@editTempParam');
 $app->post('orderTemplate/appendParam', 'OrderTemplateController@appendParam');
 $app->post('orderTemplate/deleteParam', 'OrderTemplateController@deleteParam');
+$app->post('orderTemplate/setIcon', 'OrderTemplateController@setIcon');
+$app->get('orderTemplate/list', 'OrderTemplateController@lists');
+
+$app->post('job/jobList', 'OrderController@getJobList');
+$app->post('job/deleteJob', 'OrderController@deleteJob');
+$app->post('job/createJob', 'OrderController@createJob');
+$app->post('job/editJob', 'OrderController@editJob');
 
 
 

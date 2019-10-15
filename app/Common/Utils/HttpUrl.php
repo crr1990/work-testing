@@ -1,6 +1,7 @@
 <?php
+namespace App\Common\Utils;
 
-class HttpUrlUrl
+class HttpUrl
 {
     protected static $handle;
 

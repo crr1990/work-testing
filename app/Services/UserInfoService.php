@@ -15,6 +15,23 @@ use Mockery\Exception;
  */
 class UserInfoService
 {
+
+    public function userList($filter, $limit, $offset, $page)
+    {
+        $user = User::where("is_enabled", 1);
+        if (isset($filter["name"]) && !empty($filter["name"])) {
+            $user->where("name", "like", $filter["name"]);
+        }
+
+        $list = $user->limit($limit)->offset($offset)->get()->toArray();
+
+        return [
+            'code' => 0,
+            'msg' => 'success',
+            'data' => ["list" => $list, "currentPage" => $page]
+        ];
+    }
+
     public function register($name, $email, $allowCapacity, $desc, $password)
     {
         if ($this->checkIsExistByEmail($email)) {
@@ -43,9 +60,9 @@ class UserInfoService
 
         $result = User::create($user);
         if ($result->id > 0) {
-            try{
+            try {
                 (new NoticeService())->sendMail($password, $user);
-            }catch(Exception $e) {
+            } catch (Exception $e) {
             }
         }
 

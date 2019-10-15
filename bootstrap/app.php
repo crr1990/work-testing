@@ -1,9 +1,8 @@
 <?php
 
 use Illuminate\Mail\MailServiceProvider;
-
-require_once __DIR__.'/../vendor/autoload.php';
-
+define("BASH_PATH",dirname(__DIR__));
+require_once BASH_PATH.'/vendor/autoload.php';
 (new Laravel\Lumen\Bootstrap\LoadEnvironmentVariables(
     dirname(__DIR__)
 ))->bootstrap();

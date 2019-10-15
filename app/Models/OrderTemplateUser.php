@@ -11,4 +11,6 @@ namespace App\Models;
 class OrderTemplateUser
 {
     public $table = "order_template_user";
+    protected $guarded = [];
+    public $timestamps = false;
 }

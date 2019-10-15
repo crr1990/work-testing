@@ -12,9 +12,46 @@ use App\Models\OrderTemplate;
 use App\Models\OrderTemplateParams;
 use App\Models\OrderTemplateUser;
 use Mockery\Exception;
+use Illuminate\Support\Facades\DB;
 
 class OrderTemplateService
 {
+    function lists($page, $number)
+    {
+        $total = OrderTemplate::where("is_enabled", 1)->count();
+        $pages = ceil($total / $number);
+        $offset = ($page - 1) * $number;
+
+        $list = OrderTemplate::with(['params' => function ($q) {
+            $q->where("is_enabled", 1)->select('temp_id','name_length','content_length','row','col','show_type','type','option');
+        }])->where("is_enabled", 1)
+            ->limit($number)
+            ->offset($offset)
+            ->get()
+            ->toArray();
+
+        $result = [];
+        foreach ($list as $v) {
+            $result[] = [
+                'temp_id'=>$v['id'],
+                'title' =>$v['title'],
+                'icon' => $v['icon'],
+                'params' => $v['params']
+
+            ];
+        }
+        $data = [
+            'list'=>$result,
+            'pageSize'=> $number,
+            'total' => $total,
+            'pageTotal' => $pages,
+            'pageCurrent' => $page
+        ];
+
+        return ['code' => 1, 'message' => 'success', 'data' => $data];
+
+    }
+
     /**
      * 创建模板
      *
@@ -34,16 +71,19 @@ class OrderTemplateService
             "title" => $title,
             "icon" => $icon
         ];
+        DB::beginTransaction();
         $res = OrderTemplate::create($data);
 
         // 解析params
         try {
-            $param = \GuzzleHttp\json_decode($params, true);
+            $param = json_decode($params, true);
         } catch (Exception $exception) {
+            DB::rollBack();
             return ["code" => 2010, "message" => $exception->getMessage()];
         }
 
         if (!is_array($param)) {
+            DB::rollBack();
             return ["code" => 2010, "message" => "参数格式错误"];
         }
 
@@ -52,14 +92,19 @@ class OrderTemplateService
             $insertParams[$k] = [
                 "name" => $v["name"],
                 "temp_id" => $res->id,
-                "length" => $v["length"],
+                "name_length" => $v["name_length"],
+                "content_length" => $v["content_length"],
+                "col" => $v["col"],
+                "row" => $v["row"],
                 "sort" => $k,
+                "option" => json_encode($v['option']),
                 "show_type" => $v["show_type"],
                 "type" => $v["type"]
             ];
         }
 
         OrderTemplateParams::insert($insertParams);
+        DB::commit();
         return ["code" => 0, "message" => "success"];
     }
 
@@ -191,5 +236,16 @@ class OrderTemplateService
         $param->is_enabled = 0;
         $param->save();
         return ["code" => 0, "message" => "success"];
+    }
+
+    public function setIcon($tempId, $icon)
+    {
+        $temp = OrderTemplate::where("id", $tempId)->first();
+        if (!$temp) {
+            return ["code" => 2022, "message" => "模板不存在!"];
+        }
+
+        $temp->icon = $icon;
+        $temp->save();
     }
 }

@@ -9,21 +9,38 @@
 namespace App\Http\Controllers;
 
 
+use App\Models\Dics;
 use App\Services\FileService;
 use App\Services\Upload;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class UploadController extends Controller
 {
     public function upload(Request $request, FileService $service)
     {
-        $dir = $request->input("dir_path", "");
-        $userId = $request->input("user_id", "");
+        $dir = $request->get("dir_path", "/data0/icons");
         $file = $request->file('file');
+        $validator = Validator::make($request->all(), [
+            "file" => "required"
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                "code" => 1004,
+                "message" => $validator->errors()->first()
+            ]);
+        }
         $fileName = $file->getClientOriginalName();
-        $fileSize = $file->getSize();
         $file->move($dir, $fileName);
-        $service->afterUpload($fileSize, $userId);
+        $res = Dics::where("key_name", "icon_url")->first();
+
+        $urlArray = json_decode($res->value,true);
+        $data = ["url" => $urlArray['host'] . "/".$fileName];
+        return response()->json([
+            'code' => 1,
+            'msg' => "success",
+            'data' => $data,
+        ]);
     }
 
     public function blockUpload(Request $request)

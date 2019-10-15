@@ -15,6 +15,20 @@ use Illuminate\Support\Facades\Validator;
 
 class OrderTemplateController
 {
+
+    public function lists(Request $request, OrderTemplateService $service)
+    {
+
+        $page = $request->input('page', 1);
+        $number = $request->input('number', 20);
+        $res = $service->lists($page, $number);
+        return response()->json([
+            "code" => $res["code"],
+            "message" => $res["message"],
+            "data" => $res['data']
+        ]);
+    }
+
     //模板的创建
     public function createTemp(Request $request, OrderTemplateService $service)
     {
@@ -44,6 +58,8 @@ class OrderTemplateController
         $data = $request->all();
         $validator = Validator::make($request->all(), [
             "temp_id" => "required",
+            "temp_name" => "required",
+            "params" => "required"
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -176,6 +192,12 @@ class OrderTemplateController
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @param OrderTemplateService $service
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function dispatchTemp(Request $request, OrderTemplateService $service)
     {
         $tempId = $request->input("temp_id");
@@ -191,5 +213,33 @@ class OrderTemplateController
         }
 
         $service->authUser($tempId, $userId);
+    }
+
+    /**
+     * 设置icon
+     *
+     * @param Request $request
+     * @param OrderTemplateService $service
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function setIcon(Request $request, OrderTemplateService $service)
+    {
+        $tempId = $request->input("temp_id");
+        $userId = $request->input("icon");
+        $validator = Validator::make($request->all(), [
+            "temp_id" => "required",
+            "icon" => "required",
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                "code" => 2001,
+                "message" => $validator->errors()->first()
+            ]);
+        }
+        $service->setIcon($tempId, $userId);
+        return response()->json([
+            "code" => 0,
+            "message" => "success"
+        ]);
     }
 }
