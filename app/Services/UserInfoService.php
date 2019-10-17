@@ -87,6 +87,7 @@ class UserInfoService
                 $response['message'] = '系统错误，无法生成令牌';
             } else {
                 $response['data']['user_id'] = strval($user->id);
+                $response['data']['user_type'] = $user->type;
                 $response['data']['access_token'] = $token;
                 $response['data']['expires_in'] = strval(time() + 86400);
             }
