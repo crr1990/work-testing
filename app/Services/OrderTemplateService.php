@@ -23,7 +23,7 @@ class OrderTemplateService
         $offset = ($page - 1) * $number;
 
         $list = OrderTemplate::with(['params' => function ($q) {
-            $q->where("is_enabled", 1)->select('temp_id','name_length','content_length','row','col','show_type','type','option');
+            $q->where("is_enabled", 1)->select('temp_id', 'name_length', 'content_length', 'row', 'col', 'show_type', 'type', 'option');
         }])->where("is_enabled", 1)
             ->limit($number)
             ->offset($offset)
@@ -32,17 +32,31 @@ class OrderTemplateService
 
         $result = [];
         foreach ($list as $v) {
+            $param = [];
+            foreach ($v['params'] as $p) {
+                $param = [
+                    "name_length" => $p['name_length'],
+                    "content_length" => $p['content_length'],
+                    "row" => $p['row'],
+                    "col" => $p['col'],
+                    "show_type" => $p['show_type'],
+                    "type" => $p['type'],
+                    "option" => $p['option'] ? json_decode($p['option'], true) : "",
+                ];
+            }
+
+
             $result[] = [
-                'temp_id'=>$v['id'],
-                'title' =>$v['title'],
+                'temp_id' => $v['id'],
+                'title' => $v['title'],
                 'icon' => $v['icon'],
-                'params' => $v['params']
+                'params' => $param
 
             ];
         }
         $data = [
-            'list'=>$result,
-            'pageSize'=> $number,
+            'list' => $result,
+            'pageSize' => $number,
             'total' => $total,
             'pageTotal' => $pages,
             'pageCurrent' => $page
@@ -165,8 +179,43 @@ class OrderTemplateService
 
         $temp->title = isset($data["title"]) && !empty($data["title"]) ? $data["title"] : $temp->title;
         $temp->icon = isset($data["icon"]) && !empty($data["icon"]) ? $data["icon"] : $temp->icon;
-        $temp->save();
 
+
+        DB::beginTransaction();
+        $temp->save();
+        OrderTemplateParams::where('temp_id',$tempId)->delete();
+        $params = $data["params"];
+        // 解析params
+        try {
+            $param = json_decode($params, true);
+        } catch (Exception $exception) {
+            DB::rollBack();
+            return ["code" => 2010, "message" => $exception->getMessage()];
+        }
+
+        if (!is_array($param)) {
+            DB::rollBack();
+            return ["code" => 2010, "message" => "参数格式错误"];
+        }
+
+        $insertParams = [];
+        foreach ($param as $k => $v) {
+            $insertParams[$k] = [
+                "name" => $v["name"],
+                "temp_id" => $tempId,
+                "name_length" => $v["name_length"],
+                "content_length" => $v["content_length"],
+                "col" => $v["col"],
+                "row" => $v["row"],
+                "sort" => $k,
+                "option" => json_encode($v['option']),
+                "show_type" => $v["show_type"],
+                "type" => $v["type"]
+            ];
+        }
+
+        OrderTemplateParams::insert($insertParams);
+        DB::commit();
         return ["code" => 0, "message" => "success"];
     }
 

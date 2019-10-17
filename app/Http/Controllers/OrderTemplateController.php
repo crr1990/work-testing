@@ -58,7 +58,6 @@ class OrderTemplateController
         $data = $request->all();
         $validator = Validator::make($request->all(), [
             "temp_id" => "required",
-            "temp_name" => "required",
             "params" => "required"
         ]);
         if ($validator->fails()) {
