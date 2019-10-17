@@ -75,15 +75,15 @@ class UserInfoService
 
     public function login($name, $password)
     {
-        $response = array('code' => '0');
+        $response = array('code' => 0);
 
         try {
             $user = $this->checkUser($name, $password);
             if (!$user) {
-                $response['code'] = '1001';
+                $response['code'] = 1001;
                 $response['message'] = '账户名或者密码错误';
             } else if (!$token = Auth::login($user)) {
-                $response['code'] = '1002';
+                $response['code'] = 1002;
                 $response['message'] = '系统错误，无法生成令牌';
             } else {
                 $response['data']['user_id'] = strval($user->id);
@@ -92,12 +92,13 @@ class UserInfoService
                 $response['data']['expires_in'] = strval(time() + 86400);
             }
         } catch (QueryException $queryException) {
-            $response['code'] = '1003';
+            $response['code'] = 1003;
             $response['message'] = '无法响应请求，服务端异常';
         }
 
         return $response;
     }
+
 
     public function checkUser($name, $password)
     {

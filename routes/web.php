@@ -25,6 +25,7 @@ $app->group(['prefix' => 'user', 'middleware' => 'auth:api'], function () use ($
     $app->post('refresh', 'AuthController@refreshToken');
     $app->post('register', 'UserController@addUser');
     $app->post('list', 'UserController@userList');
+    $app->post('info', 'UserController@userInfo');
 });
 
 

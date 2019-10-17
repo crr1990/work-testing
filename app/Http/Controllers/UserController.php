@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Services\UserInfoService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -102,6 +103,30 @@ class UserController extends Controller
         $isEnabled = $request->input("isEnabled", 1);
         $response = $userInfoService->editUserInfo($name, $email, $allowCapacity, $password, $isEnabled, $id);
         return response()->json($response);
+    }
+
+    public function userInfo(Request $request)
+    {
+        $id = $request->input("userId", "");
+        $validator = Validator::make($request->all(), [
+            "userId" => "required",
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "code" => 1010,
+                "message" => $validator->errors()->first()
+            ]);
+        }
+
+        $user = User::where('id', $id)->first();
+        $response = [
+            'code' => 0,
+            'message' => 'success',
+            'data' => $user
+        ];
+        return response()->json($response);
+
     }
 
     public function resetPassword(Request $request, UserInfoService $userInfoService)
