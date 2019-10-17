@@ -107,7 +107,7 @@ class UserController extends Controller
 
     public function userInfo(Request $request)
     {
-        $id = $request->input("userId", "");
+        $id = $request->input("userId", 0);
         $validator = Validator::make($request->all(), [
             "userId" => "required",
         ]);
@@ -119,7 +119,7 @@ class UserController extends Controller
             ]);
         }
 
-        $user = User::where('id', $id)->first();
+        $user = User::where('id', (int)$id)->first();
         $response = [
             'code' => 0,
             'message' => 'success',

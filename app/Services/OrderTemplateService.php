@@ -62,7 +62,7 @@ class OrderTemplateService
             'pageCurrent' => $page
         ];
 
-        return ['code' => 1, 'message' => 'success', 'data' => $data];
+        return ['code' => 0, 'message' => 'success', 'data' => $data];
 
     }
 
