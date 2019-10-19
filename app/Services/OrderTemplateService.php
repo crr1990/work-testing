@@ -34,7 +34,7 @@ class OrderTemplateService
         foreach ($list as $v) {
             $param = [];
             foreach ($v['params'] as $p) {
-                $param = [
+                $param[] = [
                     "name_length" => $p['name_length'],
                     "content_length" => $p['content_length'],
                     "row" => $p['row'],
