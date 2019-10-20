@@ -90,31 +90,24 @@ class OrderTemplateService
         DB::beginTransaction();
         $res = OrderTemplate::create($data);
 
-        // 解析params
-//        try {
-//            $param = json_decode($params, true);
-//        } catch (Exception $exception) {
-//            DB::rollBack();
-//            return ["code" => 2010, "message" => $exception->getMessage()];
-//        }
-
         if (!is_array($params)) {
             DB::rollBack();
             return ["code" => 2010, "message" => "参数格式错误"];
         }
 
         $insertParams = [];
+
         foreach ($params as $k => $v) {
             $insertParams[$k] = [
                 "name" => $v["name"],
                 "temp_id" => $res->id,
-                "name_length" => $v["name_length"],
-                "content_length" => $v["content_length"],
+                "name_length" => $v["nameLength"],
+                "content_length" => $v["contentength"],
                 "col" => $v["col"],
                 "row" => $v["row"],
                 "sort" => $k,
                 "option" => json_encode($v['option']),
-                "show_type" => $v["show_type"],
+                "show_type" => $v["showType"],
                 "type" => $v["type"]
             ];
         }
