@@ -37,6 +37,7 @@ class OrderTemplateService
             $param = [];
             foreach ($v['params'] as $p) {
                 $param[] = [
+                    "name" => $p['name'],
                     "name_length" => $p['name_length'],
                     "content_length" => $p['content_length'],
                     "row" => $p['row'],
@@ -106,7 +107,7 @@ class OrderTemplateService
                 "col" => $v["col"],
                 "row" => $v["row"],
                 "sort" => $k,
-                "option" => json_encode($v['option']),
+                "option" => json_encode($['option']),
                 "show_type" => $v["showType"],
                 "type" => $v["type"]
             ];
