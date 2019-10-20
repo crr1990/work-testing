@@ -91,14 +91,14 @@ class OrderTemplateService
         $res = OrderTemplate::create($data);
 
         // 解析params
-        try {
-            $param = json_decode($params, true);
-        } catch (Exception $exception) {
-            DB::rollBack();
-            return ["code" => 2010, "message" => $exception->getMessage()];
-        }
+//        try {
+//            $param = json_decode($params, true);
+//        } catch (Exception $exception) {
+//            DB::rollBack();
+//            return ["code" => 2010, "message" => $exception->getMessage()];
+//        }
 
-        if (!is_array($param)) {
+        if (!is_array($params)) {
             DB::rollBack();
             return ["code" => 2010, "message" => "参数格式错误"];
         }
