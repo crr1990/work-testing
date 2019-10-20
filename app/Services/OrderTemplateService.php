@@ -24,7 +24,7 @@ class OrderTemplateService
 
         $list = OrderTemplate::with(['params' => function ($q) {
             $q->where("is_enabled", 1)
-                ->select('temp_id', 'name_length', 'content_length', 'row', 'col', 'show_type', 'type', 'option')
+                ->select('temp_id', 'name','name_length', 'content_length', 'row', 'col', 'show_type', 'type', 'option')
                 ->orderBy('row', 'asc')->orderBy('col', 'asc');
         }])->where("is_enabled", 1)
             ->limit($number)
@@ -107,7 +107,7 @@ class OrderTemplateService
                 "col" => $v["col"],
                 "row" => $v["row"],
                 "sort" => $k,
-                "option" => json_encode($['option']),
+                "option" => json_encode($v['option']),
                 "show_type" => $v["showType"],
                 "type" => $v["type"]
             ];
