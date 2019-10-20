@@ -32,11 +32,11 @@ class OrderTemplateController
     //模板的创建
     public function createTemp(Request $request, OrderTemplateService $service)
     {
-        $tempName = $request->input("temp_name");
+        $tempName = $request->input("title");
         $icon = $request->input("icon", "");
         $param = $request->input("params");
         $validator = Validator::make($request->all(), [
-            "temp_name" => "required",
+            "title" => "required",
             "params" => "required"
         ]);
         if ($validator->fails()) {
