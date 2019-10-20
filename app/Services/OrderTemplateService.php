@@ -104,7 +104,7 @@ class OrderTemplateService
         }
 
         $insertParams = [];
-        foreach ($param as $k => $v) {
+        foreach ($params as $k => $v) {
             $insertParams[$k] = [
                 "name" => $v["name"],
                 "temp_id" => $res->id,
