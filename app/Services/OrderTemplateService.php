@@ -102,7 +102,7 @@ class OrderTemplateService
                 "name" => $v["name"],
                 "temp_id" => $res->id,
                 "name_length" => $v["nameLength"],
-                "content_length" => $v["contentength"],
+                "content_length" => $v["contentLength"],
                 "col" => $v["col"],
                 "row" => $v["row"],
                 "sort" => $k,
