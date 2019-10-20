@@ -23,7 +23,9 @@ class OrderTemplateService
         $offset = ($page - 1) * $number;
 
         $list = OrderTemplate::with(['params' => function ($q) {
-            $q->where("is_enabled", 1)->select('temp_id', 'name_length', 'content_length', 'row', 'col', 'show_type', 'type', 'option');
+            $q->where("is_enabled", 1)
+                ->select('temp_id', 'name_length', 'content_length', 'row', 'col', 'show_type', 'type', 'option')
+                ->orderBy('row', 'asc')->orderBy('col', 'asc');
         }])->where("is_enabled", 1)
             ->limit($number)
             ->offset($offset)
@@ -56,10 +58,10 @@ class OrderTemplateService
         }
         $data = [
             'list' => $result,
-            'pageSize' => $number,
-            'total' => $total,
-            'pageTotal' => $pages,
-            'pageCurrent' => $page
+            'pageSize' => intval($number),
+            'total' => intval($total),
+            'pageTotal' => intval($pages),
+            'pageCurrent' => intval($page)
         ];
 
         return ['code' => 0, 'message' => 'success', 'data' => $data];
@@ -183,7 +185,7 @@ class OrderTemplateService
 
         DB::beginTransaction();
         $temp->save();
-        OrderTemplateParams::where('temp_id',$tempId)->delete();
+        OrderTemplateParams::where('temp_id', $tempId)->delete();
         $params = $data["params"];
         // 解析params
         try {
