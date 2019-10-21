@@ -192,13 +192,13 @@ class OrderTemplateService
             $insertParams[$k] = [
                 "name" => $v["name"],
                 "temp_id" => $tempId,
-                "name_length" => $v["name_length"],
-                "content_length" => $v["content_length"],
+                "name_length" => $v["nameLength"],
+                "content_length" => $v["contentLength"],
                 "col" => $v["col"],
                 "row" => $v["row"],
                 "sort" => $k,
                 "option" => json_encode($v['option']),
-                "show_type" => $v["show_type"],
+                "show_type" => $v["showType"],
                 "type" => $v["type"]
             ];
         }
