@@ -181,21 +181,14 @@ class OrderTemplateService
         $temp->save();
         OrderTemplateParams::where('temp_id', $tempId)->delete();
         $params = $data["params"];
-        // 解析params
-        try {
-            $param = json_decode($params, true);
-        } catch (Exception $exception) {
-            DB::rollBack();
-            return ["code" => 2010, "message" => $exception->getMessage()];
-        }
 
-        if (!is_array($param)) {
+        if (!is_array($params)) {
             DB::rollBack();
             return ["code" => 2010, "message" => "参数格式错误"];
         }
 
         $insertParams = [];
-        foreach ($param as $k => $v) {
+        foreach ($params as $k => $v) {
             $insertParams[$k] = [
                 "name" => $v["name"],
                 "temp_id" => $tempId,
