@@ -57,7 +57,7 @@ class OrderTemplateController
     {
         $data = $request->all();
         $validator = Validator::make($request->all(), [
-            "temp_id" => "required",
+            "tempId" => "required",
             "params" => "required"
         ]);
         if ($validator->fails()) {
@@ -67,7 +67,7 @@ class OrderTemplateController
             ]);
         }
 
-        $res = $service->editTemp($data["temp_id"], $data);
+        $res = $service->editTemp($data["tempId"], $data);
 
         return response()->json([
             "code" => $res["code"],
