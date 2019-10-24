@@ -85,9 +85,9 @@ class OrderTemplateController
      */
     public function deleteTemp(Request $request, OrderTemplateService $service)
     {
-        $tempId = $request->input("temp_id");
+        $tempId = $request->input("tempId");
         $validator = Validator::make($request->all(), [
-            "temp_id" => "required",
+            "tempId" => "required",
         ]);
         if ($validator->fails()) {
             return response()->json([

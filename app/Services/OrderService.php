@@ -149,15 +149,15 @@ class OrderService
             ];
         }
 
-        if (isset($data["job_name"]) && !empty($data["job_name"])) {
-            $job = Order::where("job_name", $data["job_name"])->first();
+        if (isset($data["jobName"]) && !empty($data["jobName"])) {
+            $job = Order::where("job_name", $data["jobName"])->first();
             if (!empty($job)) {
                 return [
                     "code" => 3001,
                     "msg" => "工单重复"
                 ];
             }
-            $order->job_name = $data["job_name"];
+            $order->job_name = $data["jobName"];
             $order->save();
         }
 

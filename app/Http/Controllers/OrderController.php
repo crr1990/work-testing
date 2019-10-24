@@ -94,7 +94,7 @@ class OrderController
     function editJob(Request $request, OrderService $service)
     {
         $validator = Validator::make($request->all(), [
-            "id" => "required",
+            "jobId" => "required",
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -103,7 +103,7 @@ class OrderController
             ]);
         }
 
-        $res = $service->editJob($request->get("id"), $request->all());
+        $res = $service->editJob($request->get("jobId"), $request->all());
         return response()->json([
             "code" => $res["code"],
             "message" => $res["msg"]
