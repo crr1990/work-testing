@@ -37,11 +37,11 @@ class OrderController
     function createJob(Request $request, OrderService $service)
     {
         $validator = Validator::make($request->all(), [
-            "temp_id" => "required",
-            "user_id" => "required",
-            "job_name" => "required",
+            "tempId" => "required",
+            "userId" => "required",
+            "jobName" => "required",
             "client" => "required",
-            "order_detail" => "required"
+            "orderDetail" => "required"
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -51,7 +51,7 @@ class OrderController
         }
 
         $data = $request->all();
-        $res = $service->createOrder($data["user_id"], $data["client"], $data["temp_id"], $data["order_detail"], $data["job_name"]);
+        $res = $service->createOrder($data["userId"], $data["client"], $data["tempId"], $data["orderDetail"], $data["jobName"]);
         return response()->json([
             "code" => $res["code"],
             "message" => $res["msg"]
