@@ -161,8 +161,8 @@ class OrderService
             $order->save();
         }
 
-        if (isset($data["order_detail"]) && !empty($data["order_detail"])) {
-            $order->order_detail = json_encode($data["order_detail"]);
+        if (isset($data["orderDetail"]) && !empty($data["orderDetail"])) {
+            $order->order_detail = json_encode($data["orderDetail"]);
             $order->save();
         }
 
