@@ -68,7 +68,7 @@ class OrderController
     function deleteJob(Request $request, OrderService $service)
     {
         $validator = Validator::make($request->all(), [
-            "id" => "required",
+            "ids" => "required",
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -76,7 +76,7 @@ class OrderController
                 "message" => $validator->errors()->first()
             ]);
         }
-        $id = $request->get("id");
+        $id = $request->get("ids");
         $service->deleteJob($id);
         return response()->json([
             "code" => 0,
@@ -135,7 +135,7 @@ class OrderController
         return response()->json([
             "code" => 0,
             "message" => "success",
-            "data" => ["list" => $list, "currentPage" => $data["page"]]
+            "data" => $list
         ]);
     }
 

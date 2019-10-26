@@ -132,9 +132,9 @@ class OrderService
         ];
     }
 
-    function deleteJob($id)
+    function deleteJob($ids)
     {
-        $order = Order::where("id", $id)->first();
+        $order = Order::whereIn("id", $ids)->first();
         $order->is_enabled = 0;
         $order->save();
     }
