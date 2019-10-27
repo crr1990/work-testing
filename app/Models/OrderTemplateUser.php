@@ -8,7 +8,9 @@
 
 
 namespace App\Models;
-class OrderTemplateUser
+use Illuminate\Database\Eloquent\Model;
+
+class OrderTemplateUser extends Model
 {
     public $table = "order_template_user";
     protected $guarded = [];

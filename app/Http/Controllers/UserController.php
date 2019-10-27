@@ -51,8 +51,23 @@ class UserController extends Controller
         $email = $request->input("email");
         $allowCapacity = $request->input("allowCapacity", 1);
         $desc = $request->input("desc", "");
+        $type = $request->input("type", 0);
         $password = $request->input("password", "");
-        $res = (new UserInfoService())->register($name, $email, $allowCapacity, $desc, $password);
+        $template = $request->input("template", "");
+        $isEnabled = $request->input("isEnabled", 1);
+
+        $validator = Validator::make($request->all(), [
+            "name" => "required",
+            "email" => "required"
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                "code" => 1004,
+                "message" => $validator->errors()->first()
+            ]);
+        }
+
+        $res = (new UserInfoService())->register($name, $email, $allowCapacity, $desc, $password,$type,$template,$isEnabled);
 
         return response()->json([
             "code" => $res['code'],
@@ -96,13 +111,15 @@ class UserController extends Controller
      */
     public function editUser(Request $request, UserInfoService $userInfoService)
     {
-        $id = $request->input("userId", "");
+        $id = $request->input("id", "");
         $name = $request->input("name", "");
         $email = $request->input("email", "");
         $allowCapacity = $request->input("allowCapacity", "");
         $password = $request->input("password", "");
         $isEnabled = $request->input("isEnabled", 1);
-        $response = $userInfoService->editUserInfo($name, $email, $allowCapacity, $password, $isEnabled, $id);
+        $template = $request->input("template", "");
+        $response = $userInfoService->editUserInfo($name, $email, $allowCapacity, $password, $isEnabled, $id,$template);
+
         return response()->json($response);
     }
 

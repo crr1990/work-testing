@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\OrderTemplateUser;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
@@ -35,6 +36,10 @@ class UserInfoService
         $totalPage = ceil($total / $limit);
 
         $list = $user->limit($limit)->offset($offset)->get()->toArray();
+        $orderTemp = new OrderTemplateService();
+        foreach ($list as $k=>$v) {
+            $list[$k]['template'] = $orderTemp->tempIdByUser($v['id']);
+        }
 
         return [
             'code' => 0,
@@ -49,21 +54,21 @@ class UserInfoService
         ];
     }
 
-    public function register($name, $email, $allowCapacity, $desc, $password)
+    public function register($name, $email, $allowCapacity, $desc, $password,$type,$template,$isEnabled)
     {
-        if ($this->checkIsExistByEmail($email)) {
-            return [
-                'code' => 2001,
-                'msg' => '邮箱已注册'
-            ];
-        }
-
-        if ($this->checkIsExistByName($name)) {
-            return [
-                'code' => 2002,
-                'msg' => '用户名已注册'
-            ];
-        }
+//        if ($this->checkIsExistByEmail($email)) {
+//            return [
+//                'code' => 2001,
+//                'msg' => '邮箱已注册'
+//            ];
+//        }
+//
+//        if ($this->checkIsExistByName($name)) {
+//            return [
+//                'code' => 2002,
+//                'msg' => '用户名已注册'
+//            ];
+//        }
 
         $password = empty($password) ? rand(100000, 999999) : $password;
 
@@ -72,14 +77,32 @@ class UserInfoService
             "allow_capacity" => $allowCapacity * 1024 * 1024,
             "email" => $email,
             "password" => md5($password),
-            "desc" => $desc
+            "type" => $type,
+            "desc" => $desc,
+            "is_enabled" => $isEnabled
         ];
 
         $result = User::create($user);
+
         if ($result->id > 0) {
+
             try {
                 (new NoticeService())->sendMail($password, $user);
             } catch (Exception $e) {
+                var_dump($e->getMessage());
+            }
+
+            $templateUser = [];
+            // 分配模板
+            foreach ($template as $v) {
+                $templateUser[] = [
+                    "temp_id"=> $v,
+                    "user_id" => $result->id
+                ];
+            }
+
+            if($templateUser) {
+                \DB::table('order_template_user')->insert($templateUser);
             }
         }
 
@@ -132,7 +155,7 @@ class UserInfoService
         return User::where("email", $email)->first() ? true : false;
     }
 
-    public function editUserInfo($name, $email, $allowCapacity, $password, $isEnabled, $id)
+    public function editUserInfo($name, $email, $allowCapacity, $password, $isEnabled, $id, $template)
     {
         $user = User::find($id);
         if (!$user) {
@@ -145,6 +168,27 @@ class UserInfoService
         $user->allow_capacity = empty($allowCapacity) ? $user->allow_capacity : $allowCapacity;
         $user->password = empty($password) ? $user->password : $password;
         $user->save();
+
+        if(md5($password) != $user->password) {
+            (new NoticeService())->sendMail($password, $user);
+        }
+
+        if(!$template){
+            \DB::delete('delete from order_template_user where user_id = ?',[$id]);
+            $templateUser = [];
+
+            // 分配模板
+            foreach ($template as $v) {
+                $templateUser[] = [
+                    "temp_id"=> $v,
+                    "user_id" => $id
+                ];
+            }
+
+            if($templateUser) {
+                \DB::table('order_template_user')->insert($templateUser);
+            }
+        }
 
         return true;
     }

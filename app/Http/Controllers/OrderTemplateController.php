@@ -19,9 +19,10 @@ class OrderTemplateController
     public function lists(Request $request, OrderTemplateService $service)
     {
 
+        $userId = $request->input('userId', 0);
         $page = $request->input('page', 1);
         $number = $request->input('number', 20);
-        $res = $service->lists($page, $number);
+        $res = $service->lists($page, $number, $userId);
         return response()->json([
             "code" => $res["code"],
             "message" => $res["message"],

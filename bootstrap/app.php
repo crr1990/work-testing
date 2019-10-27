@@ -1,6 +1,4 @@
 <?php
-
-use Illuminate\Mail\MailServiceProvider;
 define("BASH_PATH",dirname(__DIR__));
 require_once BASH_PATH.'/vendor/autoload.php';
 (new Laravel\Lumen\Bootstrap\LoadEnvironmentVariables(
@@ -80,6 +78,7 @@ $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register(App\Providers\AppServiceProvider::class);
 $app->register(App\Providers\AuthServiceProvider::class);
 $app->register(App\Providers\EventServiceProvider::class);
+$app->register( Illuminate\Mail\MailServiceProvider::class);
 //$app->register(AetherUpload\AetherUploadServiceProvider::class);
 
 /*

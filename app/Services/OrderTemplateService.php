@@ -16,17 +16,23 @@ use Illuminate\Support\Facades\DB;
 
 class OrderTemplateService
 {
-    function lists($page, $number)
+    function lists($page, $number, $userId)
     {
+        $temps = $this->tempIdByUser($userId);
         $total = OrderTemplate::where("is_enabled", 1)->count();
         $pages = ceil($total / $number);
         $offset = ($page - 1) * $number;
 
-        $list = OrderTemplate::with(['params' => function ($q) {
+        $query = OrderTemplate::with(['params' => function ($q) {
             $q->where("is_enabled", 1)
-                ->select('temp_id', 'name','name_length', 'content_length', 'row', 'col', 'show_type', 'type', 'option')
+                ->select('temp_id', 'name', 'name_length', 'content_length', 'row', 'col', 'show_type', 'type', 'option')
                 ->orderBy('row', 'asc')->orderBy('col', 'asc');
-        }])->where("is_enabled", 1)
+        }]);
+        if ($userId > 0) {
+            $query = $query->whereIn("id", $temps);
+        }
+
+        $list = $query->where("is_enabled", 1)
             ->limit($number)
             ->offset($offset)
             ->get()
@@ -285,5 +291,10 @@ class OrderTemplateService
 
         $temp->icon = $icon;
         $temp->save();
+    }
+
+    public function tempIdByUser($userId)
+    {
+        return OrderTemplateUser::where("user_id", $userId)->pluck("temp_id")->toArray();
     }
 }
