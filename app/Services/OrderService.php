@@ -112,9 +112,11 @@ class OrderService
         $pageTotal = ceil($total / $limit);
 
         $res = $order->limit($limit)->offset(($filter['page'] - 1) * $limit)->get()->toArray();
+
         $result = [];
         foreach ($res as $v) {
             $result[] = [
+                'id' => $v['id'],
                 'jobName' => $v['job_name'],
                 'client' => $v['client'],
                 'createTime' => $v['create_time'],

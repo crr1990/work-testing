@@ -37,7 +37,7 @@ class UploadController extends Controller
         $urlArray = json_decode($res->value,true);
         $data = ["url" => $urlArray['host'] . "/".$fileName];
         return response()->json([
-            'code' => 1,
+            'code' => 0,
             'msg' => "success",
             'data' => $data,
         ]);
