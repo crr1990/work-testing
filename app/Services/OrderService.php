@@ -35,13 +35,12 @@ class OrderService
             ];
         }
 
-        $tempParams = OrderTemplateParams::where("temp_id", $tempId)->orderBy("sort")->get()->toArray();
+
 
         $options = [];
         // 组装数据
-        foreach ($tempParams as $key => $v) {
-            $tempParams[$key]["value"] = $params[$key];
-            $options[] = [$v["name"] => $params[$key]];
+        foreach ($params as $key => $v) {
+            $options[] = [$v["name"] => $v["value"]];
         }
 
         Order::create([
@@ -49,7 +48,7 @@ class OrderService
             "job_name" => $jobName,
             "temp_id" => $tempId,
             "client" => $client,
-            "order_detail" => json_encode($tempParams),
+            "order_detail" => json_encode($params),
         ]);
 
         // 调用第三方创建工单数据
