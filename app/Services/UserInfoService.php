@@ -23,6 +23,14 @@ class UserInfoService
             $user->where("name", "like", $filter["name"]);
         }
 
+        if (isset($filter["userId"]) && !empty($filter["userId"])) {
+            $user->where("id", $filter["userId"]);
+        }
+
+        if (isset($filter["email"]) && !empty($filter["email"])) {
+            $user->where("email", $filter["email"]);
+        }
+
         $total = $user->count();
         $totalPage = ceil($total / $limit);
 
