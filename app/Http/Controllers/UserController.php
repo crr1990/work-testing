@@ -29,7 +29,8 @@ class UserController extends Controller
 
         $filter = $request->all();
         $page = $request->input("page", 1);
-        $res = $service->userList($filter, 20, ($page - 1) * 20, $page);
+        $pageSize = $request->input("pageSize", 1);
+        $res = $service->userList($filter, $pageSize, ($page - 1) * $pageSize, $page);
 
         return response()->json([
             "code" => $res['code'],
