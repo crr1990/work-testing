@@ -31,11 +31,12 @@ class UploadController extends Controller
             ]);
         }
         $fileName = $file->getClientOriginalName();
-        $file->move($dir, $fileName);
+        $newFileName = time()."_".$fileName;
+        $file->move($dir, $newFileName);
         $res = Dics::where("key_name", "icon_url")->first();
 
         $urlArray = json_decode($res->value,true);
-        $data = ["url" => $urlArray['host'] . "/".$fileName];
+        $data = ["url" => $urlArray['host'] . "/".$newFileName];
         return response()->json([
             'code' => 0,
             'msg' => "success",
