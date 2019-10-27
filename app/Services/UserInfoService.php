@@ -23,12 +23,21 @@ class UserInfoService
             $user->where("name", "like", $filter["name"]);
         }
 
+        $total = $user->count();
+        $totalPage = ceil($total / $limit);
+
         $list = $user->limit($limit)->offset($offset)->get()->toArray();
 
         return [
             'code' => 0,
             'msg' => 'success',
-            'data' => ["list" => $list, "currentPage" => $page]
+            'data' => [
+                "list" => $list,
+                "currentPage" => $page,
+                "totalPage" => $totalPage,
+                "pageSize" => $limit,
+                "total" => $total
+            ]
         ];
     }
 
