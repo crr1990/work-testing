@@ -26,6 +26,7 @@ $app->group(['prefix' => 'user', 'middleware' => 'auth:api'], function () use ($
     $app->post('editUserInfo', 'UserController@editUser');
     $app->post('list', 'UserController@userList');
     $app->post('info', 'UserController@userInfo');
+
 });
 
 
@@ -42,6 +43,8 @@ $app->post('job/jobList', 'OrderController@getJobList');
 $app->post('job/deleteJob', 'OrderController@deleteJob');
 $app->post('job/createJob', 'OrderController@createJob');
 $app->post('job/editJob', 'OrderController@editJob');
+
+$app->post('user/resetPassword', 'UserController@resetPassword');
 
 
 

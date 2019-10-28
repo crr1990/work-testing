@@ -129,7 +129,7 @@ class UserInfoService
                 $response['data']['user_id'] = strval($user->id);
                 $response['data']['user_type'] = $user->type;
                 $response['data']['access_token'] = $token;
-                $response['data']['expires_in'] = strval(time() + 86400);
+                $response['data']['expires_in'] = strval(time() + 86400*360);
             }
         } catch (QueryException $queryException) {
             $response['code'] = 1003;

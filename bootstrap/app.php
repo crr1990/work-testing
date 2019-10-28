@@ -78,7 +78,7 @@ $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register(App\Providers\AppServiceProvider::class);
 $app->register(App\Providers\AuthServiceProvider::class);
 $app->register(App\Providers\EventServiceProvider::class);
-$app->register( Illuminate\Mail\MailServiceProvider::class);
+//$app->register( Illuminate\Mail\MailServiceProvider::class);
 //$app->register(AetherUpload\AetherUploadServiceProvider::class);
 
 /*
@@ -91,6 +91,7 @@ $app->register( Illuminate\Mail\MailServiceProvider::class);
 | can respond to, as well as the controllers that may handle them.
 |
 */
+
 $app->singleton('mailer', function () use ($app) {
     return $app->loadComponent('mail', Illuminate\Mail\MailServiceProvider::class, 'mailer');
 });

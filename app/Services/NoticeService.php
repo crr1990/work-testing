@@ -20,7 +20,6 @@ class NoticeService
      */
     public function sendMail($password, $user)
     {
-        return;
         Mail::raw("你的登录密码是{$password}", function ($message) use ($user) {
             $message->from("814258346@qq.com", "艾为图像设备（上海）有限公司");
             $message->to($user['email'], $user['name']);

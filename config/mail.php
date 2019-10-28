@@ -6,7 +6,7 @@ return [
     'port' => "465",
     'encryption' => "ssl",
     'username' => '814258346@qq.com',
-    'password' => 'azcoztiluwiebefi',
+    'password' => 'rrllczkqqwcqbffj',
     'from' => [
         'address' => '814258346@qq.com',
         'name' => '重置密码',
