@@ -176,7 +176,7 @@ class UserInfoService
 
 
         \DB::delete('delete from order_template_user where user_id = ?', [$id]);
-        if(!$template) {
+        if($template) {
             $templateUser = [];
 
             // 分配模板
