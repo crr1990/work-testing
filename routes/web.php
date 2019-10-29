@@ -19,6 +19,7 @@ $app->get('/', function () {
 $app->get('test', 'ExampleController@test');
 $app->post('login', 'UserController@login');
 $app->post('upload', 'UploadController@upload');
+$app->post('user/resetPassword', 'UserController@resetPassword');
 
 $app->group(['prefix' => 'user', 'middleware' => 'auth:api'], function () use ($app) {
     $app->post('logout', 'AuthController@logout');
@@ -27,7 +28,7 @@ $app->group(['prefix' => 'user', 'middleware' => 'auth:api'], function () use ($
     $app->post('editUserInfo', 'UserController@editUser');
     $app->post('list', 'UserController@userList');
     $app->post('info', 'UserController@userInfo');
-    $app->post('resetPassword', 'UserController@resetPassword');
+
 });
 
 $app->group(['prefix' => 'orderTemplate', 'middleware' => 'auth:api'], function () use ($app) {
