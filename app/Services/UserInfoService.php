@@ -32,7 +32,7 @@ class UserInfoService
             $user->where("email", $filter["email"]);
         }
 
-        $total = $user->count();
+        $total = $user->where('is_enabled','>=',0)->count();
         $totalPage = ceil($total / $limit);
 
         $list = $user->limit($limit)->offset($offset)->get()->toArray();
@@ -163,7 +163,7 @@ class UserInfoService
         }
 
         $user->name = empty($name) ? $user->name : $name;
-        $user->is_enabled = $isEnabled != 1 ? $user->is_enabled : $isEnabled;
+        $user->is_enabled = $isEnabled;
         $user->email = empty($email) ? $user->email : $email;
         $user->allow_capacity = empty($allowCapacity) ? $user->allow_capacity : $allowCapacity;
         $user->password = empty($password) ? $user->password : $password;

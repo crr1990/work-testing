@@ -158,6 +158,10 @@ class UserController extends Controller
 
     }
 
+    public function delete(Request $request, UserInfoService $userInfoService) {
+
+    }
+
     public function resetPassword(Request $request, UserInfoService $userInfoService)
     {
         $email = $request->input("email", "");

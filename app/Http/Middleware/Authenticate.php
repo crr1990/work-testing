@@ -36,7 +36,7 @@ class Authenticate
     public function handle($request, Closure $next, $guard = null)
     {
         if ($this->auth->guard($guard)->guest()) {
-            $response['code'] = '4001';
+            $response['code'] = 4001;
             $response['message'] = '无效令牌，需要重新获取';
             return response()->json($response);
         }
