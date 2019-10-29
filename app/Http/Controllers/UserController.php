@@ -159,7 +159,16 @@ class UserController extends Controller
     }
 
     public function delete(Request $request, UserInfoService $userInfoService) {
-
+        $id = $request->input("id", "");
+        $userId = $request->input("userId", "");
+        if ($id == $userId) {
+            return response()->json([
+                "code" => 2010,
+                "message" => "不能删自己"
+            ]);
+        }
+        $response = $userInfoService->delete($id);
+        return response()->json($response);
     }
 
     public function resetPassword(Request $request, UserInfoService $userInfoService)

@@ -28,6 +28,7 @@ $app->group(['prefix' => 'user', 'middleware' => 'auth:api'], function () use ($
     $app->post('editUserInfo', 'UserController@editUser');
     $app->post('list', 'UserController@userList');
     $app->post('info', 'UserController@userInfo');
+    $app->post('delete', 'UserController@delete');
 
 });
 

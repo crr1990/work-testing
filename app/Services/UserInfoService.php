@@ -16,10 +16,17 @@ use Mockery\Exception;
  */
 class UserInfoService
 {
+    public function delete($id)
+    {
+        $user = User::where("id", $id)->first();
+        $user->is_del = 1;
+        $user->save();
+        return ['code' => 0, 'message' => "success"];
+    }
 
     public function userList($filter, $limit, $offset, $page)
     {
-        $user = User::where("is_enabled", 1);
+        $user = User::where("is_del", 0);
         if (isset($filter["name"]) && !empty($filter["name"])) {
             $user->where("name", "like", $filter["name"]);
         }
@@ -32,7 +39,7 @@ class UserInfoService
             $user->where("email", $filter["email"]);
         }
 
-        $total = $user->where('is_enabled','>=',0)->count();
+        $total = $user->count();
         $totalPage = ceil($total / $limit);
 
         $list = $user->limit($limit)->offset($offset)->get()->toArray();
@@ -176,7 +183,7 @@ class UserInfoService
 
 
         \DB::delete('delete from order_template_user where user_id = ?', [$id]);
-        if($template) {
+        if ($template) {
             $templateUser = [];
 
             // 分配模板
@@ -192,7 +199,7 @@ class UserInfoService
             }
         }
 
-        return ['code'=>0,'message'=>"success"];
+        return ['code' => 0, 'message' => "success"];
     }
 
     /**
@@ -204,16 +211,17 @@ class UserInfoService
      */
     public function resetPassword($name, $email)
     {
-        $user = User::where("email", $email)->where("name",$name)
+        $user = User::where("email", $email)->where("name", $name)
             ->first();
         if (!$user) {
             return false;
         }
 
-        $user->password = md5(round(100000, 999999));
+        $pass = round(100000, 999999);
+        $user->password = md5($pass);
         $user->save();
 
-        (new NoticeService())->sendMail($user->password, $user);
+        (new NoticeService())->sendMail($pass, $user);
         return true;
     }
 }
