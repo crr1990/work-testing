@@ -58,6 +58,19 @@ class OrderController
         ]);
     }
 
+    public function copy(Request $request, OrderService $service) {
+        $validator = Validator::make($request->all(), [
+            "id" => "required",
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                "code" => 2001,
+                "message" => $validator->errors()->first()
+            ]);
+        }
+        $res = $service->copyJob($request->get("id"));
+    }
+
     /**
      * 删除工单
      *
@@ -94,7 +107,7 @@ class OrderController
     function editJob(Request $request, OrderService $service)
     {
         $validator = Validator::make($request->all(), [
-            "jobId" => "required",
+            "id" => "required",
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -103,7 +116,7 @@ class OrderController
             ]);
         }
 
-        $res = $service->editJob($request->get("jobId"), $request->all());
+        $res = $service->editJob($request->get("id"), $request->all());
         return response()->json([
             "code" => $res["code"],
             "message" => $res["msg"]

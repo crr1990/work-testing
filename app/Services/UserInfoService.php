@@ -37,7 +37,7 @@ class UserInfoService
 
         $list = $user->limit($limit)->offset($offset)->get()->toArray();
         $orderTemp = new OrderTemplateService();
-        foreach ($list as $k=>$v) {
+        foreach ($list as $k => $v) {
             $list[$k]['template'] = $orderTemp->tempIdByUser($v['id']);
         }
 
@@ -54,21 +54,21 @@ class UserInfoService
         ];
     }
 
-    public function register($name, $email, $allowCapacity, $desc, $password,$type,$template,$isEnabled)
+    public function register($name, $email, $allowCapacity, $desc, $password, $type, $template, $isEnabled)
     {
-//        if ($this->checkIsExistByEmail($email)) {
-//            return [
-//                'code' => 2001,
-//                'msg' => '邮箱已注册'
-//            ];
-//        }
-//
-//        if ($this->checkIsExistByName($name)) {
-//            return [
-//                'code' => 2002,
-//                'msg' => '用户名已注册'
-//            ];
-//        }
+        if ($this->checkIsExistByEmail($email)) {
+            return [
+                'code' => 2001,
+                'msg' => '邮箱已注册'
+            ];
+        }
+
+        if ($this->checkIsExistByName($name)) {
+            return [
+                'code' => 2002,
+                'msg' => '用户名已注册'
+            ];
+        }
 
         $password = empty($password) ? rand(100000, 999999) : $password;
 
@@ -96,12 +96,12 @@ class UserInfoService
             // 分配模板
             foreach ($template as $v) {
                 $templateUser[] = [
-                    "temp_id"=> $v,
+                    "temp_id" => $v,
                     "user_id" => $result->id
                 ];
             }
 
-            if($templateUser) {
+            if ($templateUser) {
                 \DB::table('order_template_user')->insert($templateUser);
             }
         }
@@ -129,7 +129,7 @@ class UserInfoService
                 $response['data']['user_id'] = strval($user->id);
                 $response['data']['user_type'] = $user->type;
                 $response['data']['access_token'] = $token;
-                $response['data']['expires_in'] = strval(time() + 86400*360);
+                $response['data']['expires_in'] = strval(time() + 86400 * 360);
             }
         } catch (QueryException $queryException) {
             $response['code'] = 1003;
@@ -155,7 +155,7 @@ class UserInfoService
         return User::where("email", $email)->first() ? true : false;
     }
 
-    public function editUserInfo($name, $email, $allowCapacity, $password, $isEnabled, $id, $template)
+    public function editUserInfo($name, $email, $allowCapacity, $password, $isEnabled, $id, $template, $type)
     {
         $user = User::find($id);
         if (!$user) {
@@ -167,30 +167,32 @@ class UserInfoService
         $user->email = empty($email) ? $user->email : $email;
         $user->allow_capacity = empty($allowCapacity) ? $user->allow_capacity : $allowCapacity;
         $user->password = empty($password) ? $user->password : $password;
+        $user->type = $type === "" ? $user->type : $type;
         $user->save();
 
-        if(md5($password) != $user->password) {
+        if (!empty($password) && md5($password) != $user->password) {
             (new NoticeService())->sendMail($password, $user);
         }
 
-        if(!$template){
-            \DB::delete('delete from order_template_user where user_id = ?',[$id]);
+
+        \DB::delete('delete from order_template_user where user_id = ?', [$id]);
+        if(!$template) {
             $templateUser = [];
 
             // 分配模板
             foreach ($template as $v) {
                 $templateUser[] = [
-                    "temp_id"=> $v,
+                    "temp_id" => $v,
                     "user_id" => $id
                 ];
             }
 
-            if($templateUser) {
+            if ($templateUser) {
                 \DB::table('order_template_user')->insert($templateUser);
             }
         }
 
-        return true;
+        return ['code'=>0,'message'=>"success"];
     }
 
     /**

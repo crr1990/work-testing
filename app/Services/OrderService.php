@@ -27,20 +27,12 @@ class OrderService
      */
     function createOrder($userId, $client, $tempId, $params, $jobName)
     {
-        $job = Order::where("job_name", $jobName)->first();
+        $job = Order::where("job_name", $jobName, "user_id", $userId)->first();
         if (!empty($job)) {
             return [
                 "code" => 3001,
                 "msg" => "工单重复"
             ];
-        }
-
-
-
-        $options = [];
-        // 组装数据
-        foreach ($params as $key => $v) {
-            $options[] = [$v["name"] => $v["value"]];
         }
 
         Order::create([
@@ -51,16 +43,36 @@ class OrderService
             "order_detail" => json_encode($params),
         ]);
 
-        // 调用第三方创建工单数据
-        // 获取调用地址
-        $res = Dics::where("key_name", "job_url")->first();
-        $urlArray = json_decode($res['value'], true);
-        HttpUrl::get($urlArray['create_url'], $options);
+       $this->afterCreateJob($params);
 
         return [
             "code" => 0,
             "msg" => "success"
         ];
+    }
+
+    public function copyJob($id) {
+        $job = Order::where("id",$id)->first();
+        if(empty($job)) {
+            return false;
+        }
+
+        $job->job_name = $job->job_name."复制";
+        Order::create($job);
+
+    }
+
+    public function afterCreateJob($params) {
+        // 调用第三方创建工单数据
+        // 获取调用地址
+        $res = Dics::where("key_name", "job_url")->first();
+        $urlArray = json_decode($res['value'], true);
+        $options = [];
+        // 组装数据
+        foreach ($params as $key => $v) {
+            $options[] = [$v["name"] => $v["value"]];
+        }
+        HttpUrl::get($urlArray['create_url'], $options);
     }
 
     /**

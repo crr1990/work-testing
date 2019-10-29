@@ -29,7 +29,7 @@ class UserController extends Controller
 
         $filter = $request->all();
         $page = $request->input("page", 1);
-        $pageSize = $request->input("pageSize", 1);
+        $pageSize = $request->input("pageSize", 20);
         $res = $service->userList($filter, $pageSize, ($page - 1) * $pageSize, $page);
 
         return response()->json([
@@ -118,7 +118,18 @@ class UserController extends Controller
         $password = $request->input("password", "");
         $isEnabled = $request->input("isEnabled", 1);
         $template = $request->input("template", "");
-        $response = $userInfoService->editUserInfo($name, $email, $allowCapacity, $password, $isEnabled, $id,$template);
+        $type = $request->input("type", 0);
+        $validator = Validator::make($request->all(), [
+            "id" => "required"
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                "code" => 1004,
+                "message" => $validator->errors()->first()
+            ]);
+        }
+        $response = $userInfoService->editUserInfo($name, $email,
+            $allowCapacity, $password, $isEnabled, $id,$template, $type);
 
         return response()->json($response);
     }

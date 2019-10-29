@@ -16,9 +16,10 @@ $app->get('/', function () {
     return 'Hello World';
 });
 
-$app->post('test', 'ExampleController@test');
+$app->get('test', 'ExampleController@test');
 $app->post('login', 'UserController@login');
 $app->post('upload', 'UploadController@upload');
+
 $app->group(['prefix' => 'user', 'middleware' => 'auth:api'], function () use ($app) {
     $app->post('logout', 'AuthController@logout');
     $app->post('refresh', 'AuthController@refreshToken');
@@ -26,25 +27,30 @@ $app->group(['prefix' => 'user', 'middleware' => 'auth:api'], function () use ($
     $app->post('editUserInfo', 'UserController@editUser');
     $app->post('list', 'UserController@userList');
     $app->post('info', 'UserController@userInfo');
+    $app->post('resetPassword', 'UserController@resetPassword');
+});
 
+$app->group(['prefix' => 'orderTemplate', 'middleware' => 'auth:api'], function () use ($app) {
+    $app->post('create', 'OrderTemplateController@createTemp');
+    $app->post('edit', 'OrderTemplateController@editTemp');
+    $app->post('delete', 'OrderTemplateController@deleteTemp');
+    $app->post('editParam', 'OrderTemplateController@editTempParam');
+    $app->post('appendParam', 'OrderTemplateController@appendParam');
+    $app->post('deleteParam', 'OrderTemplateController@deleteParam');
+    $app->post('setIcon', 'OrderTemplateController@setIcon');
+    $app->post('list', 'OrderTemplateController@lists');
+});
+
+$app->group(['prefix' => 'job', 'middleware' => 'auth:api'], function () use ($app) {
+    $app->post('jobList', 'OrderController@getJobList');
+    $app->post('deleteJob', 'OrderController@deleteJob');
+    $app->post('createJob', 'OrderController@createJob');
+    $app->post('editJob', 'OrderController@editJob');
+    $app->post('copyJob', 'OrderController@copy');
 });
 
 
-$app->post('orderTemplate/create', 'OrderTemplateController@createTemp');
-$app->post('orderTemplate/edit', 'OrderTemplateController@editTemp');
-$app->post('orderTemplate/delete', 'OrderTemplateController@deleteTemp');
-$app->post('orderTemplate/editParam', 'OrderTemplateController@editTempParam');
-$app->post('orderTemplate/appendParam', 'OrderTemplateController@appendParam');
-$app->post('orderTemplate/deleteParam', 'OrderTemplateController@deleteParam');
-$app->post('orderTemplate/setIcon', 'OrderTemplateController@setIcon');
-$app->post('orderTemplate/list', 'OrderTemplateController@lists');
 
-$app->post('job/jobList', 'OrderController@getJobList');
-$app->post('job/deleteJob', 'OrderController@deleteJob');
-$app->post('job/createJob', 'OrderController@createJob');
-$app->post('job/editJob', 'OrderController@editJob');
-
-$app->post('user/resetPassword', 'UserController@resetPassword');
 
 
 
