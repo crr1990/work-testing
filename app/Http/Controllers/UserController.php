@@ -67,7 +67,7 @@ class UserController extends Controller
             ]);
         }
 
-        $res = (new UserInfoService())->register($name, $email, $allowCapacity, $desc, $password,$type,$template,$isEnabled);
+        $res = (new UserInfoService())->register($name, $email, intval($allowCapacity), $desc, $password,$type,$template,$isEnabled);
 
         return response()->json([
             "code" => $res['code'],
