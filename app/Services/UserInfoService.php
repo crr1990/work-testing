@@ -204,8 +204,9 @@ class UserInfoService
      */
     public function resetPassword($name, $email)
     {
-        $user = User::where("email", $email)->first();
-        if (!$user || $user->name != $name) {
+        $user = User::where("email", $email)->where("name",$name)
+            ->first();
+        if (!$user) {
             return false;
         }
 
