@@ -101,6 +101,10 @@ class OrderService
             $order->where("job_name", $filter["jobName"]);
         }
 
+        if (isset($filter['client']) && !empty($filter["client"])) {
+            $order->where("client", $filter["client"]);
+        }
+
 
         if (!empty($filter["sort"])) {
             switch ($filter["sort"]) {
