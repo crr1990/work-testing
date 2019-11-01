@@ -27,7 +27,7 @@ class OrderService
      */
     function createOrder($userId, $client, $tempId, $params, $jobName)
     {
-        $job = Order::where("job_name", $jobName, "user_id", $userId)->first();
+        $job = Order::where("job_name", $jobName)->where("user_id", $userId)->first();
         if (!empty($job)) {
             return [
                 "code" => 3001,
