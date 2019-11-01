@@ -35,7 +35,7 @@ class OrderService
             ];
         }
 
-        Order::create([
+        $result = Order::create([
             "user_id" => $userId,
             "job_name" => $jobName,
             "temp_id" => $tempId,
@@ -47,7 +47,8 @@ class OrderService
 
         return [
             "code" => 0,
-            "msg" => "success"
+            "msg" => "success",
+            "data" => $result->id
         ];
     }
 

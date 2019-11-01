@@ -54,7 +54,8 @@ class OrderController
         $res = $service->createOrder($data["userId"], $data["client"], $data["tempId"], $data["orderDetail"], $data["jobName"]);
         return response()->json([
             "code" => $res["code"],
-            "message" => $res["msg"]
+            "message" => $res["msg"],
+            "data" => $res["data"]
         ]);
     }
 
