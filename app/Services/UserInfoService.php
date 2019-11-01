@@ -154,12 +154,12 @@ class UserInfoService
 
     public function checkIsExistByName($name)
     {
-        return User::where("name", $name)->first() ? true : false;
+        return User::where("name", $name)->where("is_del",0)->first() ? true : false;
     }
 
     public function checkIsExistByEmail($email)
     {
-        return User::where("email", $email)->first() ? true : false;
+        return User::where("email", $email)->where("is_del",0)->first() ? true : false;
     }
 
     public function editUserInfo($name, $email, $allowCapacity, $password, $isEnabled, $id, $template, $type)
