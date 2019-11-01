@@ -10,6 +10,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Services\UserInfoService;
+use Illuminate\Filesystem\Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -202,4 +203,22 @@ class UserController extends Controller
 
     }
 
+    public function captchaInfo()
+    {
+        $result = app('captcha')->create();
+        //这个key可以自定义，我是放到了文件缓存中
+        $key = sprintf(config('constants.cache.captcha_code'), $result['key']);
+        Cache::set($key,$result['key'],config('constants.cache.ten'));
+        //返回值包括一个base_64加密的图片和一个key
+        return $this->success($result);
+    }
+
+    public function check(Request $request){
+        $captcha = $request->input('captcha');
+        $captcha = strtolower($captcha);
+        $key = Cache::get(sprintf(config('constants.cache.captcha_code'), $request->input('key')));
+        if(app('captcha')->check($captcha,$key) === false){
+            return $this->error('验证码错误');
+        }
+    }
 }

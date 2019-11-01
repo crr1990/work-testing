@@ -19,6 +19,8 @@ $app->get('/', function () {
 $app->get('test', 'ExampleController@test');
 $app->post('login', 'UserController@login');
 $app->post('upload', 'UploadController@upload');
+$app->post('captchaInfo', 'UserController@captchaInfo');
+$app->post('checkCaptcha', 'UserController@check');
 $app->post('user/resetPassword', 'UserController@resetPassword');
 
 $app->group(['prefix' => 'user', 'middleware' => 'auth:api'], function () use ($app) {
