@@ -217,7 +217,7 @@ class UserInfoService
             return false;
         }
 
-        $pass = round(100000, 999999);
+        $pass = rand(100000, 999999);
         $user->password = md5($pass);
         $user->save();
 
