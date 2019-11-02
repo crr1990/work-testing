@@ -43,7 +43,7 @@ class OrderService
             "order_detail" => json_encode($params),
         ]);
 
-       $this->afterCreateJob($params);
+        $this->afterCreateJob($params);
 
         return [
             "code" => 0,
@@ -52,18 +52,20 @@ class OrderService
         ];
     }
 
-    public function copyJob($id) {
-        $job = Order::where("id",$id)->first();
-        if(empty($job)) {
+    public function copyJob($id)
+    {
+        $job = Order::where("id", $id)->first();
+        if (empty($job)) {
             return false;
         }
 
-        $job->job_name = $job->job_name."复制";
+        $job->job_name = $job->job_name . "复制";
         Order::create($job);
 
     }
 
-    public function afterCreateJob($params) {
+    public function afterCreateJob($params)
+    {
         // 调用第三方创建工单数据
         // 获取调用地址
         $res = Dics::where("key_name", "job_url")->first();
@@ -168,8 +170,10 @@ class OrderService
             ];
         }
 
-        if (isset($data["jobName"]) && !empty($data["jobName"])) {
-            $job = Order::where("job_name", $data["jobName"])->first();
+        if (!empty($data["jobName"]) && ($data["jobName"] != $order->job_name)) {
+            $job = Order::where("job_name", $data["jobName"])
+                ->where("user_id", $data['userId'])
+                ->first();
             if (!empty($job)) {
                 return [
                     "code" => 3001,
