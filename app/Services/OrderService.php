@@ -135,6 +135,7 @@ class OrderService
             $result[] = [
                 'id' => $v['id'],
                 'jobName' => $v['job_name'],
+                'tempId' => $v['temp_id'],
                 'client' => $v['client'],
                 'createTime' => $v['create_time'],
                 'detail' => json_decode($v['order_detail'])
