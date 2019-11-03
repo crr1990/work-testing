@@ -173,7 +173,7 @@ class UserInfoService
         $user->is_enabled = $isEnabled;
         $user->email = empty($email) ? $user->email : $email;
         $user->allow_capacity = empty($allowCapacity) ? $user->allow_capacity : $allowCapacity;
-        $user->password = empty($password) ? $user->password : $password;
+        $user->password = empty($password) ? $user->password : md5($password);
         $user->type = $type === "" ? $user->type : $type;
         $user->save();
 

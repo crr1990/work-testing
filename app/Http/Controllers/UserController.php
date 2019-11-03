@@ -13,6 +13,7 @@ use App\Services\UserInfoService;
 use Illuminate\Filesystem\Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Monolog\Logger;
 
 
 class UserController extends Controller
@@ -100,6 +101,7 @@ class UserController extends Controller
 
         session_start();
         if (!empty($_SESSION['code'])) {
+
             if ($request->input("code") != $_SESSION['code']) {
                 return response()->json([
                     "code" => 1005,
