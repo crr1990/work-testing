@@ -9,8 +9,7 @@
         "illuminate/mail": "^5.8",
         "laravel/lumen-framework": "5.8.*",
         "peinhu/aetherupload-laravel": "~2.0",
-        "tymon/jwt-auth": "^1.0.0-rc.2",
-        "youngyezi/captcha": "^2.0"
+        "tymon/jwt-auth": "^1.0.0-rc.2"
     },
     "require-dev": {
         "fzaninotto/faker": "^1.4",

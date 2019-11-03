@@ -80,9 +80,8 @@ $app->register(App\Providers\AuthServiceProvider::class);
 $app->register(App\Providers\EventServiceProvider::class);
 //$app->register( Illuminate\Mail\MailServiceProvider::class);
 //$app->register(AetherUpload\AetherUploadServiceProvider::class);
-$app->register(Youngyezi\Captcha\CaptchaServiceProvider::class);
-// 添加别名
-$app->alias('captcha', 'Youngyezi\Captcha\CaptchaServiceProvider');
+
+
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

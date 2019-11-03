@@ -17,6 +17,7 @@ $app->get('/', function () {
 });
 
 $app->get('test', 'ExampleController@test');
+$app->get('code', 'ExampleController@getCode');
 $app->post('login', 'UserController@login');
 $app->post('upload', 'UploadController@upload');
 $app->post('captchaInfo', 'UserController@captchaInfo');

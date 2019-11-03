@@ -27,4 +27,11 @@ class ExampleController extends Controller
             sleep(1);
         }
     }
+
+    public function getCode() {
+session_start();
+var_dump($_SESSION['code']);exit;
+
+
+    }
 }

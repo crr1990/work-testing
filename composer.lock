@@ -4,8 +4,65 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "a49a85692a065aecc109c85ec182dd16",
+    "content-hash": "651395bcd596f0d231c1d13e73175453",
     "packages": [
+        {
+            "name": "aishan/lumen-captcha",
+            "version": "v1.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aishan/lumen-captcha.git",
+                "reference": "9f9fe62c273f12d7f00de98dde23648194bdd6a6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aishan/lumen-captcha/zipball/9f9fe62c273f12d7f00de98dde23648194bdd6a6",
+                "reference": "9f9fe62c273f12d7f00de98dde23648194bdd6a6",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "ext-gd": "*",
+                "illuminate/config": "~5.0",
+                "illuminate/filesystem": "~5.0",
+                "illuminate/hashing": "~5.0",
+                "illuminate/support": "~5.0",
+                "intervention/image": "~2.2",
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Aishan\\LumenCaptcha\\": "src/"
+                },
+                "files": [
+                    "src/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "aishan",
+                    "email": "aishan520315@vip.126.com",
+                    "homepage": "http://www.aishan100.com"
+                }
+            ],
+            "description": "captcha for lumen",
+            "keywords": [
+                "Captcha for api",
+                "lumen Captcha",
+                "lumen Security"
+            ],
+            "time": "2016-11-24T10:36:33+00:00"
+        },
         {
             "name": "doctrine/inflector",
             "version": "v1.3.0",

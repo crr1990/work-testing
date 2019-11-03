@@ -98,6 +98,16 @@ class UserController extends Controller
             ]);
         }
 
+        session_start();
+        if (!empty($_SESSION['code'])) {
+            if ($request->input("code") != $_SESSION['code']) {
+                return response()->json([
+                    "code" => 1005,
+                    "message" => "验证码错误"
+                ]);
+            }
+        }
+
         $response = $userInfoService->login($name, $password);
         return response()->json($response);
     }
@@ -201,24 +211,5 @@ class UserController extends Controller
             ]);
         }
 
-    }
-
-    public function captchaInfo()
-    {
-        $result = app('captcha')->create();
-        //这个key可以自定义，我是放到了文件缓存中
-        $key = sprintf(config('constants.cache.captcha_code'), $result['key']);
-        Cache::set($key,$result['key'],config('constants.cache.ten'));
-        //返回值包括一个base_64加密的图片和一个key
-        return $this->success($result);
-    }
-
-    public function check(Request $request){
-        $captcha = $request->input('captcha');
-        $captcha = strtolower($captcha);
-        $key = Cache::get(sprintf(config('constants.cache.captcha_code'), $request->input('key')));
-        if(app('captcha')->check($captcha,$key) === false){
-            return $this->error('验证码错误');
-        }
     }
 }
