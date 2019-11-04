@@ -24,7 +24,7 @@ class ExampleController extends Controller
         while (true) {
             echo "data:".date("Y-m-d H:i:s",time())."\n\n";
             ob_flush();flush();
-            sleep(1);
+            sleep(10);
         }
     }
 

@@ -155,9 +155,7 @@ class OrderService
 
     function deleteJob($ids)
     {
-        $order = Order::whereIn("id", $ids)->first();
-        $order->is_enabled = 0;
-        $order->save();
+        Order::whereIn("id", $ids)->update(['is_enabled'=> 0]);
     }
 
     function editJob($id, $data)
