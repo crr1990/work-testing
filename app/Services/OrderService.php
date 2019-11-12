@@ -218,7 +218,7 @@ class OrderService
         $order->save();
 
         $params = json_decode($order->order_detail, true);
-        $this->afterCreateJob($params, $job->job_name);
+        $this->afterCreateJob($params, $order->job_name);
         return [
             "code" => 0,
             "msg" => "success"
