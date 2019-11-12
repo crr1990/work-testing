@@ -57,7 +57,7 @@ class OrderService
         return [
             "code" => 0,
             "msg" => "success",
-            "data" => $result->id
+            "data" => ['id'=>$result->id,'savePath'=>$path]
         ];
     }
 
