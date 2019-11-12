@@ -12,6 +12,8 @@ use App\Common\Utils\HttpUrl;
 use App\Models\Dics;
 use App\Models\Order;
 use App\Models\OrderTemplateParams;
+use App\Models\User;
+use GuzzleHttp\Client;
 
 class OrderService
 {
@@ -35,15 +37,22 @@ class OrderService
             ];
         }
 
+        $year = date('Y', time());
+        $month = date('m', time());
+        $day = date('d', time());
+        $user = User::where('id', $userId)->first();
+        $path = $user->name . '/' . $year . '/' . $month . '/' . $day . '/' . $jobName;
+
         $result = Order::create([
             "user_id" => $userId,
             "job_name" => $jobName,
             "temp_id" => $tempId,
             "client" => $client,
             "order_detail" => json_encode($params),
+            'file_path' => $path
         ]);
 
-        $this->afterCreateJob($params);
+        $this->afterCreateJob($params, $jobName);
 
         return [
             "code" => 0,
@@ -60,22 +69,28 @@ class OrderService
         }
 
         $job->job_name = $job->job_name . "复制";
-        Order::create($job);
+        $res = Order::create($job);
+        //$params = json_decode($job->order_detail, true);
+        //$this->afterCreateJob($params, $job->job_name);
+        return ['code' => 0, "msg" => "success", "data" => $res->id];
 
     }
 
-    public function afterCreateJob($params)
+    public function afterCreateJob($params, $jobName)
     {
         // 调用第三方创建工单数据
         // 获取调用地址
         $res = Dics::where("key_name", "job_url")->first();
-        $urlArray = json_decode($res['value'], true);
+        $urlArray = json_decode($res->value, true);
+
         $options = [];
         // 组装数据
         foreach ($params as $key => $v) {
-            $options[] = [$v["name"] => $v["value"]];
+            $options[$v["name"]] = $v["value"];
         }
-        HttpUrl::get($urlArray['create_url'], $options);
+        $options["jobName"] = $jobName;
+
+        $this->get($urlArray['create_url'], $options);
     }
 
     /**
@@ -140,7 +155,8 @@ class OrderService
                 'tempId' => $v['temp_id'],
                 'client' => $v['client'],
                 'createTime' => $v['create_time'],
-                'detail' => json_decode($v['order_detail'])
+                'detail' => json_decode($v['order_detail']),
+                'file_path' => $v['file_path']
             ];
         }
 
@@ -155,7 +171,7 @@ class OrderService
 
     function deleteJob($ids)
     {
-        Order::whereIn("id", $ids)->update(['is_enabled'=> 0]);
+        Order::whereIn("id", $ids)->update(['is_enabled' => 0]);
     }
 
     function editJob($id, $data)
@@ -179,17 +195,41 @@ class OrderService
                 ];
             }
             $order->job_name = $data["jobName"];
-            $order->save();
         }
 
         if (isset($data["orderDetail"]) && !empty($data["orderDetail"])) {
             $order->order_detail = json_encode($data["orderDetail"]);
-            $order->save();
         }
 
+
+        $year = date('Y', time());
+        $month = date('m', time());
+        $day = date('d', time());
+        $user = User::where('id', $order['user_id'])->first();
+        $order->file_path = $user->name . '/' . $year . '/' . $month . '/' . $day . '/' . $order->job_name;
+
+        $order->save();
+
+        $params = json_decode($order->order_detail, true);
+        $this->afterCreateJob($params, $job->job_name);
         return [
             "code" => 0,
             "msg" => "success"
         ];
+    }
+
+    public function get($url, $query)
+    {
+        $client = new Client();
+
+
+        $array = [
+            'headers' => [],
+            'query' => $query,
+            'http_errors' => false   #支持错误输出
+        ];
+        $response = $client->request('GET', $url, $array);
+        return $response->getStatusCode();
+        //dump(json_decode($response->getBody()->getContents()));   #输出结果
     }
 }

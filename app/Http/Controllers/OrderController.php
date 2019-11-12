@@ -55,7 +55,7 @@ class OrderController
         return response()->json([
             "code" => $res["code"],
             "message" => $res["msg"],
-            "data" => $res["data"]
+            "data" => isset($res["data"]) ? $res["data"] : ""
         ]);
     }
 
@@ -70,6 +70,11 @@ class OrderController
             ]);
         }
         $res = $service->copyJob($request->get("id"));
+        return response()->json([
+            "code" => $res["code"],
+            "message" => $res["msg"],
+            "data" => $res["data"]
+        ]);
     }
 
     /**
