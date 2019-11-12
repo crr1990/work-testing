@@ -163,7 +163,7 @@ class OrderService
                 'client' => $v['client'],
                 'createTime' => $v['create_time'],
                 'detail' => json_decode($v['order_detail']),
-                'file_path' => $v['file_path']
+                'savePath' => $v['file_path']
             ];
         }
 
