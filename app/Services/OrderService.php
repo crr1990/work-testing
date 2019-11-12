@@ -65,15 +65,22 @@ class OrderService
     {
         $job = Order::where("id", $id)->first();
         if (empty($job)) {
-            return false;
+            return [
+                'code'=>2001,
+                'msg'=>'工单不存在',
+                'data' => ''
+            ];
         }
 
-        $job->job_name = $job->job_name . "复制";
-        $res = Order::create($job);
-        //$params = json_decode($job->order_detail, true);
-        //$this->afterCreateJob($params, $job->job_name);
+        $param = [
+            "job_name" => $job->job_name . "复制",
+            "temp_id" => $job->temp_id,
+            "user_id" => $job->user_id,
+            "client" => $job->client,
+            "order_detail" => $job->order_detail
+        ];
+        $res = Order::create($param);
         return ['code' => 0, "msg" => "success", "data" => $res->id];
-
     }
 
     public function afterCreateJob($params, $jobName)

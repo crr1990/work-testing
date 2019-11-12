@@ -70,6 +70,7 @@ class OrderController
             ]);
         }
         $res = $service->copyJob($request->get("id"));
+
         return response()->json([
             "code" => $res["code"],
             "message" => $res["msg"],
