@@ -11,6 +11,7 @@ namespace App\Services;
 use App\Models\OrderTemplate;
 use App\Models\OrderTemplateParams;
 use App\Models\OrderTemplateUser;
+use App\Models\User;
 use Mockery\Exception;
 use Illuminate\Support\Facades\DB;
 
@@ -28,8 +29,13 @@ class OrderTemplateService
                 ->select('temp_id', 'name', 'name_length', 'content_length', 'row', 'col', 'show_type', 'type', 'option')
                 ->orderBy('row', 'asc')->orderBy('col', 'asc');
         }]);
+
+
         if ($userId > 0) {
-            $query = $query->whereIn("id", $temps);
+            $user = User::where("id",$userId)->first();
+            if(!empty($user) && $user->type == 0) {
+                $query = $query->whereIn("id", $temps);
+            }
         }
 
         $list = $query->where("is_enabled", 1)
