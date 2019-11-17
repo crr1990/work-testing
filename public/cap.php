@@ -7,6 +7,10 @@
  */
 session_start();
 header ('Content-Type: image/png');
+header ('Access-Control-Allow-Methods: GET, POST, PUT, DELETE,OPTIONS');
+header ('Access-Control-Allow-Credentials: true');
+header ('Access-Control-Allow-Headers: *');
+header ('Access-Control-Max-Age: 1728000');
 
 $image=imagecreatetruecolor(100, 30);
 //背景颜色为白色
