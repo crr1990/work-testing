@@ -111,6 +111,7 @@ class UserController extends Controller
         }
 
         $response = $userInfoService->login($name, $password);
+        $response['cede'] = $_SESSION['code'];
         return response()->json($response);
     }
 

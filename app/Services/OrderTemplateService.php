@@ -33,6 +33,7 @@ class OrderTemplateService
 
         if ($userId > 0) {
             $user = User::where("id",$userId)->first();
+
             if(!empty($user) && $user->type == 0) {
                 $query = $query->whereIn("id", $temps);
             }
