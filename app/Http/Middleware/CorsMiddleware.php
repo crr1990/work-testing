@@ -27,7 +27,7 @@ class CorsMiddleware
         ];
 
         $this->allow_origin = [
-            'http://192.168.1.12:8080'
+            'http://47.102.149.201:8620'
         ];
         $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
 
@@ -54,7 +54,7 @@ class CorsMiddleware
             $response->header($key, $value);
         }
         if (in_array($origin, $this->allow_origin)) {
-            $response->header('Access-Control-Allow-Origin', '*');
+            $response->header('Access-Control-Allow-Origin', 'http://47.102.149.201:8620');
         } else {
             $response->header('Access-Control-Allow-Origin', '*');
         }
