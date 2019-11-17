@@ -22,6 +22,7 @@ class CorsMiddleware
             'Access-Control-Allow-Methods' => 'GET, POST, PUT, DELETE,OPTIONS',
             'Access-Control-Allow-Headers' => $request->header('Access-Control-Request-Headers'),
             'Access-Control-Allow-Credentials' => 'true',//允许客户端发送cookie
+            'Access-Control-Allow-Origin'=>'http://47.102.149.201:8620',
             'Access-Control-Max-Age' => 1728000 //该字段可选，用来指定本次预检请求的有效期，在此期间，不用发出另一条预检请求。
         ];
 

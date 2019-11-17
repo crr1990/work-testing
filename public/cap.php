@@ -8,7 +8,7 @@
 
 header ('Content-Type: image/png');
 header ('Access-Control-Allow-Methods: GET, POST, PUT, DELETE,OPTIONS');
-header ('Access-Control-Allow-Origin: *');
+header ('Access-Control-Allow-Origin: http://47.102.149.201:8620');
 header ('Access-Control-Allow-Credentials: true');
 header ('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
 header ('Access-Control-Max-Age: 1728000');
