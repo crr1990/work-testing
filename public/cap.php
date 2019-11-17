@@ -5,14 +5,14 @@
  * Date: 2019/11/2
  * Time: 11:14 PM
  */
-
+session_start();
 header ('Content-Type: image/png');
 header ('Access-Control-Allow-Methods: GET, POST, PUT, DELETE,OPTIONS');
 header ('Access-Control-Allow-Origin: http://47.102.149.201:8620');
 header ('Access-Control-Allow-Credentials: true');
 header ('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
 header ('Access-Control-Max-Age: 1728000');
-session_start();
+
 $image=imagecreatetruecolor(100, 30);
 //背景颜色为白色
 $color=imagecolorallocate($image, 255, 255, 255);
@@ -31,6 +31,7 @@ for($i=0;$i<4;$i++){
     imagestring($image, $fontSize, $x, $y, $string, $color);
 }
 $_SESSION['code']=$code;//存储在session里
+
 
 for($i=0;$i<200;$i++){
     $pointColor=imagecolorallocate($image, rand(100, 255), rand(100, 255), rand(100, 255));
