@@ -43,16 +43,17 @@ class OrderService
         $user = User::where('id', $userId)->first();
         $path = $user->name . '/' . $year . '/' . $month . '/' . $day . '/' . $jobName;
 
+        $taskID = $this->afterCreateJob($params, $jobName);
         $result = Order::create([
             "user_id" => $userId,
             "job_name" => $jobName,
             "temp_id" => $tempId,
             "client" => $client,
             "order_detail" => json_encode($params),
-            'file_path' => $path
+            'file_path' => $path,
+            'task_id' => $taskID,
         ]);
 
-        $this->afterCreateJob($params, $jobName);
 
         return [
             "code" => 0,
@@ -83,6 +84,15 @@ class OrderService
         return ['code' => 0, "msg" => "success", "data" => $res->id];
     }
 
+    function xmltoarr($path){//xml字符串转数组
+        $xml= $path;//XML文件
+        $objectxml = simplexml_load_string($xml);//将文件转换成 对象
+        $xmljson= json_encode($objectxml );//将对象转换个JSON
+        $xmlarray=json_decode($xmljson,true);//将json转换成数组
+        return $xmlarray;
+    }
+
+
     public function afterCreateJob($params, $jobName)
     {
         // 调用第三方创建工单数据
@@ -95,9 +105,12 @@ class OrderService
         foreach ($params as $key => $v) {
             $options[$v["name"]] = $v["value"];
         }
+
         $options["jobName"] = $jobName;
 
-        $this->get($urlArray['create_url'], $options);
+        $result = $this->get($urlArray['create_url'], $options);
+        $result = $this->xmltoarr($result);
+        return substr($result['response'],7);
     }
 
     /**
@@ -215,10 +228,10 @@ class OrderService
         $user = User::where('id', $order['user_id'])->first();
         $order->file_path = $user->name . '/' . $year . '/' . $month . '/' . $day . '/' . $order->job_name;
 
-        $order->save();
-
         $params = json_decode($order->order_detail, true);
-        $this->afterCreateJob($params, $order->job_name);
+        $taskId = $this->afterCreateJob($params, $order->job_name);
+        $order->task_id = $taskId;
+        $order->save();
         return [
             "code" => 0,
             "msg" => "success"
@@ -236,7 +249,20 @@ class OrderService
             'http_errors' => false   #支持错误输出
         ];
         $response = $client->request('GET', $url, $array);
-        return $response->getStatusCode();
+        return $response->getBody()->getContents();
         //dump(json_decode($response->getBody()->getContents()));   #输出结果
+    }
+
+    public function startJob($jobId) {
+        // 调用第三方创建工单数据
+        // 获取调用地址
+        $res = Dics::where("key_name", "job_url")->first();
+        $urlArray = json_decode($res->value, true);
+
+        $options = [];
+        // 组装数
+        $options["jobId"] = $jobId;
+        $result = $this->get($urlArray['start_url'], $options);
+        return $this->xmltoarr($result);
     }
 }

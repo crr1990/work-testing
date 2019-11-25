@@ -18,13 +18,24 @@ use Illuminate\Support\Facades\Validator;
 class OrderController
 {
     // 工单执行
-    public function start(Request $request)
+    public function start(Request $request, OrderService $service)
     {
-        // 获取调用地址
-        $res = Dics::where("key_name", "job_url")->first();
-        $urlArray = json_decode($res);
+        $validator = Validator::make($request->all(), [
+            "jobId" => "required"
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                "code" => 2001,
+                "message" => $validator->errors()->first()
+            ]);
+        }
 
-        HttpUrl::get($urlArray['start_url'], $request->all());
+        $res = $service->startJob($request->get("jobId"));
+        return response()->json([
+            "code" => 0,
+            "message" => "success",
+            "data" => $res
+        ]);
     }
 
     /**

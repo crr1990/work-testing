@@ -52,6 +52,7 @@ $app->group(['prefix' => 'job', 'middleware' => 'auth:api'], function () use ($a
     $app->post('createJob', 'OrderController@createJob');
     $app->post('editJob', 'OrderController@editJob');
     $app->post('copyJob', 'OrderController@copy');
+    $app->post('start', 'OrderController@start');
 });
 
 
