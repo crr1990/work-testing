@@ -58,7 +58,7 @@ class OrderService
         return [
             "code" => 0,
             "msg" => "success",
-            "data" => ['id'=>$result->id,'savePath'=>$path]
+            "data" => ['id' => $result->id, 'savePath' => $path, 'taskId' => $taskID]
         ];
     }
 
@@ -67,8 +67,8 @@ class OrderService
         $job = Order::where("id", $id)->first();
         if (empty($job)) {
             return [
-                'code'=>2001,
-                'msg'=>'工单不存在',
+                'code' => 2001,
+                'msg' => '工单不存在',
                 'data' => ''
             ];
         }
@@ -84,11 +84,12 @@ class OrderService
         return ['code' => 0, "msg" => "success", "data" => $res->id];
     }
 
-    function xmltoarr($path){//xml字符串转数组
-        $xml= $path;//XML文件
+    function xmltoarr($path)
+    {//xml字符串转数组
+        $xml = $path;//XML文件
         $objectxml = simplexml_load_string($xml);//将文件转换成 对象
-        $xmljson= json_encode($objectxml );//将对象转换个JSON
-        $xmlarray=json_decode($xmljson,true);//将json转换成数组
+        $xmljson = json_encode($objectxml);//将对象转换个JSON
+        $xmlarray = json_decode($xmljson, true);//将json转换成数组
         return $xmlarray;
     }
 
@@ -109,11 +110,11 @@ class OrderService
         $options["jobName"] = $jobName;
 
         $result = $this->get($urlArray['create_url'], $options);
-        if(empty($result)){
+        if (empty($result)) {
             return false;
         }
         $result = $this->xmltoarr($result);
-        return substr($result['response'],7);
+        return substr($result['response'], 7);
     }
 
     /**
@@ -238,7 +239,8 @@ class OrderService
         $order->save();
         return [
             "code" => 0,
-            "msg" => "success"
+            "msg" => "success",
+            "data" => ["savePath" => $order->file_path, "taskId" => $taskId]
         ];
     }
 
@@ -252,16 +254,17 @@ class OrderService
             'query' => $query,
             'http_errors' => false   #支持错误输出
         ];
-        try{
+        try {
             $response = $client->request('GET', $url, $array);
             return $response->getBody()->getContents();
-        }catch (\Exception $exception) {
+        } catch (\Exception $exception) {
             return null;
         }
 
     }
 
-    public function startJob($jobId) {
+    public function startJob($jobId)
+    {
         // 调用第三方创建工单数据
         // 获取调用地址
         $res = Dics::where("key_name", "job_url")->first();
@@ -271,7 +274,7 @@ class OrderService
         // 组装数
         $options["jobId"] = $jobId;
         $result = $this->get($urlArray['start_url'], $options);
-        if(empty($result)) {
+        if (empty($result)) {
             return false;
         }
         return $this->xmltoarr($result);
