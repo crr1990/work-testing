@@ -44,6 +44,13 @@ class OrderService
         $path = $user->name . '/' . $year . '/' . $month . '/' . $day . '/' . $jobName;
 
         $taskID = $this->afterCreateJob($params, $jobName);
+        if(empty($taskID)){
+            return [
+                "code" => 3000,
+                "msg" => "创建工单失败",
+                "data"=>[]
+            ];
+        }
         $result = Order::create([
             "user_id" => $userId,
             "job_name" => $jobName,
