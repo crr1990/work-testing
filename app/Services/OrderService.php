@@ -109,6 +109,9 @@ class OrderService
         $options["jobName"] = $jobName;
 
         $result = $this->get($urlArray['create_url'], $options);
+        if(empty($result)){
+            return false;
+        }
         $result = $this->xmltoarr($result);
         return substr($result['response'],7);
     }
@@ -176,7 +179,8 @@ class OrderService
                 'client' => $v['client'],
                 'createTime' => $v['create_time'],
                 'detail' => json_decode($v['order_detail']),
-                'savePath' => $v['file_path']
+                'savePath' => $v['file_path'],
+                'taskId' => $v['task_id']
             ];
         }
 
@@ -248,9 +252,13 @@ class OrderService
             'query' => $query,
             'http_errors' => false   #支持错误输出
         ];
-        $response = $client->request('GET', $url, $array);
-        return $response->getBody()->getContents();
-        //dump(json_decode($response->getBody()->getContents()));   #输出结果
+        try{
+            $response = $client->request('GET', $url, $array);
+            return $response->getBody()->getContents();
+        }catch (\Exception $exception) {
+            return null;
+        }
+
     }
 
     public function startJob($jobId) {
@@ -263,6 +271,9 @@ class OrderService
         // 组装数
         $options["jobId"] = $jobId;
         $result = $this->get($urlArray['start_url'], $options);
+        if(empty($result)) {
+            return false;
+        }
         return $this->xmltoarr($result);
     }
 }
