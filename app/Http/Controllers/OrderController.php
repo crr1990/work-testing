@@ -137,7 +137,8 @@ class OrderController
         $res = $service->editJob($request->get("id"), $request->all());
         return response()->json([
             "code" => $res["code"],
-            "message" => $res["msg"]
+            "message" => $res["msg"],
+            "data" => $res["data"]
         ]);
 
     }

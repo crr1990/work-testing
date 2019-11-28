@@ -212,7 +212,8 @@ class OrderService
         if (empty($order)) {
             return [
                 "code" => 3002,
-                "msg" => "工单不存在"
+                "msg" => "工单不存在",
+                "data"=> []
             ];
         }
 
@@ -223,7 +224,8 @@ class OrderService
             if (!empty($job)) {
                 return [
                     "code" => 3001,
-                    "msg" => "工单重复"
+                    "msg" => "工单重复",
+                    "data"=> []
                 ];
             }
             $order->job_name = $data["jobName"];
@@ -242,7 +244,15 @@ class OrderService
 
         $params = json_decode($order->order_detail, true);
         $taskId = $this->afterCreateJob($params, $order->job_name);
+
         $order->task_id = $taskId;
+        if(empty($taskId)){
+            return [
+                "code" => 3000,
+                "msg" => "工单编辑，调用create服务失败",
+                "data"=> []
+            ];
+        }
         $order->save();
         return [
             "code" => 0,
