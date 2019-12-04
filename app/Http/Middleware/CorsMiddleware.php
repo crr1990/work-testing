@@ -22,12 +22,12 @@ class CorsMiddleware
             'Access-Control-Allow-Methods' => 'GET, POST, PUT, DELETE,OPTIONS',
             'Access-Control-Allow-Headers' => $request->header('Access-Control-Request-Headers'),
             'Access-Control-Allow-Credentials' => 'true',//允许客户端发送cookie
-            'Access-Control-Allow-Origin'=>'http://47.102.149.201:8620',
+            'Access-Control-Allow-Origin'=>'http://139.226.75.188.85',
             'Access-Control-Max-Age' => 1728000 //该字段可选，用来指定本次预检请求的有效期，在此期间，不用发出另一条预检请求。
         ];
 
         $this->allow_origin = [
-            'http://47.102.149.201:8620'
+            'http://139.226.75.188.85'
         ];
         $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
 
@@ -54,7 +54,7 @@ class CorsMiddleware
             $response->header($key, $value);
         }
         if (in_array($origin, $this->allow_origin)) {
-            $response->header('Access-Control-Allow-Origin', 'http://47.102.149.201:8620');
+            $response->header('Access-Control-Allow-Origin', 'http://139.226.75.188.85');
         } else {
             $response->header('Access-Control-Allow-Origin', '*');
         }
