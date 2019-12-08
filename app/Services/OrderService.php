@@ -43,7 +43,7 @@ class OrderService
         $user = User::where('id', $userId)->first();
         $path = $user->name . '/' . $year . '/' . $month . '/' . $day . '/' . $jobName;
 
-        $taskID = $this->afterCreateJob($params, $jobName);
+        $taskID = $this->afterCreateJob($params, $jobName, $user->name);
         if (empty($taskID)) {
             return [
                 "code" => 3000,
@@ -101,7 +101,7 @@ class OrderService
     }
 
 
-    public function afterCreateJob($params, $jobName)
+    public function afterCreateJob($params, $jobName, $userName)
     {
         // 调用第三方创建工单数据
         // 获取调用地址
@@ -114,7 +114,7 @@ class OrderService
             $options[$v["name"]] = $v["value"];
         }
 
-        $options["jobName"] = $jobName;
+        $options["jobName"] = $userName . "-" . $jobName;
 
         $result = $this->get($urlArray['create_url'], $options);
         if (empty($result)) {
@@ -242,7 +242,7 @@ class OrderService
         $order->file_path = $user->name . '/' . $year . '/' . $month . '/' . $day . '/' . $order->job_name;
 
         $params = json_decode($order->order_detail, true);
-        $taskId = $this->afterCreateJob($params, $order->job_name);
+        $taskId = $this->afterCreateJob($params, $order->job_name,$user->name);
 
         $order->task_id = $taskId;
         if (empty($taskId)) {
@@ -311,7 +311,7 @@ class OrderService
                 'message' => '启动失败'
             ];
         }
-        $order->start_times = $order->start_times+1;
+        $order->start_times = $order->start_times + 1;
         $order->save();
         return [
             'code' => 0,
