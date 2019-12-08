@@ -44,11 +44,11 @@ class OrderService
         $path = $user->name . '/' . $year . '/' . $month . '/' . $day . '/' . $jobName;
 
         $taskID = $this->afterCreateJob($params, $jobName);
-        if(empty($taskID)){
+        if (empty($taskID)) {
             return [
                 "code" => 3000,
                 "msg" => "创建工单失败",
-                "data"=>[]
+                "data" => []
             ];
         }
         $result = Order::create([
@@ -121,12 +121,9 @@ class OrderService
             return false;
         }
         $result = $this->xmltoarr($result);
-        return substr($result['response'], 7);
+        return substr(trim($result['response']), 7);
     }
 
-    /**
-     * @param $filter
-     */
     function orderList($filter)
     {
         $order = Order::where("is_enabled", 1);
@@ -147,13 +144,12 @@ class OrderService
         }
 
         if (isset($filter['jobName']) && !empty($filter["jobName"])) {
-            $order->where("job_name", $filter["jobName"]);
+            $order->where("job_name", "like", "%" . $filter["jobName"] . "%");
         }
 
         if (isset($filter['client']) && !empty($filter["client"])) {
-            $order->where("client", $filter["client"]);
+            $order->where("client", "like", "%" . $filter["client"] . "%");
         }
-
 
         if (!empty($filter["sort"])) {
             switch ($filter["sort"]) {
@@ -213,7 +209,7 @@ class OrderService
             return [
                 "code" => 3002,
                 "msg" => "工单不存在",
-                "data"=> []
+                "data" => []
             ];
         }
 
@@ -225,7 +221,7 @@ class OrderService
                 return [
                     "code" => 3001,
                     "msg" => "工单重复",
-                    "data"=> []
+                    "data" => []
                 ];
             }
             $order->job_name = $data["jobName"];
@@ -235,6 +231,9 @@ class OrderService
             $order->order_detail = json_encode($data["orderDetail"]);
         }
 
+        if (isset($data["client"]) && !empty($data["client"])) {
+            $order->client = $data["client"];
+        }
 
         $year = date('Y', time());
         $month = date('m', time());
@@ -246,11 +245,11 @@ class OrderService
         $taskId = $this->afterCreateJob($params, $order->job_name);
 
         $order->task_id = $taskId;
-        if(empty($taskId)){
+        if (empty($taskId)) {
             return [
                 "code" => 3000,
                 "msg" => "工单编辑，调用create服务失败",
-                "data"=> []
+                "data" => []
             ];
         }
         $order->save();
@@ -280,7 +279,7 @@ class OrderService
 
     }
 
-    public function startJob($jobId)
+    public function startJob($params)
     {
         // 调用第三方创建工单数据
         // 获取调用地址
@@ -289,11 +288,35 @@ class OrderService
 
         $options = [];
         // 组装数
-        $options["jobId"] = $jobId;
+        //$options["jobId"] = $jobId;
+        $order = Order::where("id", $params['id'])->first();
+        if (!$order) {
+            return [
+                'code' => 4001,
+                'message' => '工单不存在'
+            ];
+        }
+        $user = User::where("id", $params['userId'])->first();
+        if (!$user) {
+            return [
+                'code' => 4002,
+                'message' => '用户不存在'
+            ];
+        }
+        $options["jobname"] = $order->client . "-" . $order->job_name;
         $result = $this->get($urlArray['start_url'], $options);
         if (empty($result)) {
-            return false;
+            return [
+                'code' => 4003,
+                'message' => '启动失败'
+            ];
         }
-        return $this->xmltoarr($result);
+        $order->start_times = $order->start_times+1;
+        $order->save();
+        return [
+            'code' => 0,
+            'message' => 'success',
+            'data' => $this->xmltoarr($result),
+        ];
     }
 }

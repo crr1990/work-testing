@@ -21,7 +21,9 @@ class OrderController
     public function start(Request $request, OrderService $service)
     {
         $validator = Validator::make($request->all(), [
-            "jobId" => "required"
+            "jobName" => "required",
+            "userId" => "required",
+            "id" => "required",
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -30,11 +32,11 @@ class OrderController
             ]);
         }
 
-        $res = $service->startJob($request->get("jobId"));
+        $res = $service->startJob($request->all());
         return response()->json([
-            "code" => 0,
-            "message" => "success",
-            "data" => $res
+            "code" => $res['code'],
+            "message" => $res['message'],
+            "data" => !empty($res['data']) ? $res['data'] : []
         ]);
     }
 
@@ -70,7 +72,8 @@ class OrderController
         ]);
     }
 
-    public function copy(Request $request, OrderService $service) {
+    public function copy(Request $request, OrderService $service)
+    {
         $validator = Validator::make($request->all(), [
             "id" => "required",
         ]);
