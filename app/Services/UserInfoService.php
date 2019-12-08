@@ -81,7 +81,7 @@ class UserInfoService
 
         $user = [
             "name" => $name,
-            "allow_capacity" => $allowCapacity * 1024 * 1024,
+            "allow_capacity" => $allowCapacity,
             "email" => $email,
             "password" => md5($password),
             "type" => $type,
