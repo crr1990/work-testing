@@ -303,7 +303,7 @@ class OrderService
                 'message' => '用户不存在'
             ];
         }
-        $options["jobname"] = $order->client . "-" . $order->job_name;
+        $options["jobname"] = $user->name . "-" . $order->job_name;
         $result = $this->get($urlArray['start_url'], $options);
         if (empty($result)) {
             return [
