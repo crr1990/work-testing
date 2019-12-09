@@ -115,6 +115,7 @@ class OrderService
         }
 
         $options["jobName"] = $userName . "-" . $jobName;
+        $options["user"] = $userName;
 
         $result = $this->get($urlArray['create_url'], $options);
         if (empty($result)) {
