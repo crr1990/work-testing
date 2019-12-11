@@ -55,9 +55,9 @@ class CorsMiddleware
         foreach ($this->headers as $key => $value) {
             $response->header($key, $value);
         }
-        $response->header('Access-Control-Allow-Origin', '*');
+
 //        if (in_array($origin, $this->allow_origin)) {
-//            $response->header('Access-Control-Allow-Origin', 'http://47.102.149.201:8620');
+            $response->header('Access-Control-Allow-Origin', 'http://47.102.149.201:8620');
 //        } else {
 //            $response->header('Access-Control-Allow-Origin', '*');
 //        }
