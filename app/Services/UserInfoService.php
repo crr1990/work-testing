@@ -58,6 +58,16 @@ class UserInfoService
         $orderTemp = new OrderTemplateService();
         foreach ($list as $k => $v) {
             $list[$k]['template'] = $orderTemp->tempIdByUser($v['id']);
+            if ($v['union_id'] == 0) {
+                $unionList = User::where("is_del", 0)->where('union_id', $v['id'])->get();
+                if (!empty($unionList)) {
+                    $list[$k]['unionList'] = $unionList->toArray();
+                } else {
+                    $list[$k]['unionList'] = [];
+                }
+            } else {
+                $list[$k]['unionList'] = [];
+            }
         }
 
         return [
@@ -188,6 +198,13 @@ class UserInfoService
         $user = User::find($id);
         if (!$user) {
             return false;
+        }
+
+        if ($type == 2 && $user->type != $type) {
+            $r = User::where("union_id", $id)->where("is_del", 0)->get();
+            if (!empty($r)) {
+                return false;
+            }
         }
 
         $user->name = empty($name) ? $user->name : $name;

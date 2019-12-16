@@ -70,7 +70,7 @@ class UserController extends Controller
             ]);
         }
 
-        $res = (new UserInfoService())->register($name, $email, intval($allowCapacity), $desc, $password, $type, $template, $isEnabled,$unionId);
+        $res = (new UserInfoService())->register($name, $email, intval($allowCapacity), $desc, $password, $type, $template, $isEnabled, $unionId);
 
         return response()->json([
             "code" => $res['code'],
@@ -100,16 +100,16 @@ class UserController extends Controller
             ]);
         }
 
-//        session_start();
-//        if (!empty($_SESSION['code'])) {
-//
-//            if ($request->input("code") != $_SESSION['code']) {
-//                return response()->json([
-//                    "code" => 1005,
-//                    "message" => "验证码错误"
-//                ]);
-//            }
-//        }
+        session_start();
+        if ($request->input("code") && !empty($_SESSION['code'])) {
+
+            if ($request->input("code") != $_SESSION['code']) {
+                return response()->json([
+                    "code" => 1005,
+                    "message" => "验证码错误"
+                ]);
+            }
+        }
 
         $response = $userInfoService->login($name, $password);
         $response['cede'] = !empty($_SESSION['code']) ? $_SESSION['code'] : 0;
@@ -129,6 +129,7 @@ class UserController extends Controller
         $id = $request->input("id", "");
         $name = $request->input("name", "");
         $email = $request->input("email", "");
+        $unionId = $request->input("union_id", 0);
         $allowCapacity = $request->input("allowCapacity", "");
         $password = $request->input("password", "");
         $isEnabled = $request->input("isEnabled", 1);
@@ -144,7 +145,7 @@ class UserController extends Controller
             ]);
         }
         $response = $userInfoService->editUserInfo($name, $email,
-            $allowCapacity, $password, $isEnabled, $id, $template, $type);
+            $allowCapacity, $password, $isEnabled, $id, $template, $type,$unionId);
 
         return response()->json($response);
     }
