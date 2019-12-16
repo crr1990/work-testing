@@ -16,11 +16,23 @@ use Mockery\Exception;
  */
 class UserInfoService
 {
+    public function getMainUserList($name)
+    {
+        $user = User::where("is_del", 0)->where('type', 0);
+        if (!empty($name)) {
+            $user->where("name", "like", $name);
+        }
+        $list = $user->select("id", "name")->get()->toArray();
+        return $list;
+    }
+
     public function delete($id)
     {
         $user = User::where("id", $id)->first();
         $user->is_del = 1;
         $user->save();
+
+        User::where("union_id", $id)->update(['is_del' => 1]);
         return ['code' => 0, 'message' => "success"];
     }
 
@@ -61,8 +73,14 @@ class UserInfoService
         ];
     }
 
-    public function register($name, $email, $allowCapacity, $desc, $password, $type, $template, $isEnabled)
+    public function register($name, $email, $allowCapacity, $desc, $password, $type, $template, $isEnabled, $unionId)
     {
+        if ($type == 2 && $unionId == 0) {
+            return [
+                'code' => 2000,
+                'msg' => '子账号必须关联主账号'
+            ];
+        }
         if ($this->checkIsExistByEmail($email)) {
             return [
                 'code' => 2001,
@@ -99,18 +117,21 @@ class UserInfoService
                 var_dump($e->getMessage());
             }
 
-            $templateUser = [];
-            // 分配模板
-            foreach ($template as $v) {
-                $templateUser[] = [
-                    "temp_id" => $v,
-                    "user_id" => $result->id
-                ];
+            if (!empty($template) && is_array($template) && $type != 2) {
+                $templateUser = [];
+                // 分配模板
+                foreach ($template as $v) {
+                    $templateUser[] = [
+                        "temp_id" => $v,
+                        "user_id" => $result->id
+                    ];
+                }
+
+                if ($templateUser) {
+                    \DB::table('order_template_user')->insert($templateUser);
+                }
             }
 
-            if ($templateUser) {
-                \DB::table('order_template_user')->insert($templateUser);
-            }
         }
 
         return [
@@ -154,12 +175,12 @@ class UserInfoService
 
     public function checkIsExistByName($name)
     {
-        return User::where("name", $name)->where("is_del",0)->first() ? true : false;
+        return User::where("name", $name)->where("is_del", 0)->first() ? true : false;
     }
 
     public function checkIsExistByEmail($email)
     {
-        return User::where("email", $email)->where("is_del",0)->first() ? true : false;
+        return User::where("email", $email)->where("is_del", 0)->first() ? true : false;
     }
 
     public function editUserInfo($name, $email, $allowCapacity, $password, $isEnabled, $id, $template, $type)

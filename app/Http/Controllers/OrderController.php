@@ -9,8 +9,6 @@
 namespace App\Http\Controllers;
 
 
-use App\Common\Utils\HttpUrl;
-use App\Models\Dics;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -129,6 +127,7 @@ class OrderController
     {
         $validator = Validator::make($request->all(), [
             "id" => "required",
+            "editUserId" => "required",
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -137,7 +136,7 @@ class OrderController
             ]);
         }
 
-        $res = $service->editJob($request->get("id"), $request->all());
+        $res = $service->editJob($request->get("id"), $request->all(),$request->get("editUserId"));
         return response()->json([
             "code" => $res["code"],
             "message" => $res["msg"],

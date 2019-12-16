@@ -10,6 +10,7 @@ namespace App\Services;
 
 use App\Common\Utils\HttpUrl;
 use App\Models\Dics;
+use App\Models\OperateLog;
 use App\Models\Order;
 use App\Models\OrderTemplateParams;
 use App\Models\User;
@@ -17,6 +18,15 @@ use GuzzleHttp\Client;
 
 class OrderService
 {
+
+    public function addLog($userId, $orderId, $action)
+    {
+        OperateLog::create([
+            'user_id' => $userId,
+            'order_id' => $orderId,
+            'action' => $action,
+        ]);
+    }
 
     /**
      * @param $userId
@@ -41,9 +51,15 @@ class OrderService
         $month = date('m', time());
         $day = date('d', time());
         $user = User::where('id', $userId)->first();
-        $path = $user->name . '/' . $year . '/' . $month . '/' . $day . '/' . $jobName;
+        $userName = $user->name;
+        if ($user->type == 2) {
+            $union = User::where('id', $user->union_id);
+            $userName = $union->name;
+        }
 
-        $taskID = $this->afterCreateJob($params, $jobName, $user->name);
+        $path = $userName . '/' . $year . '/' . $month . '/' . $day . '/' . $userName . '-' . $jobName;
+
+        $taskID = $this->afterCreateJob($params, $jobName, $userName);
         if (empty($taskID)) {
             return [
                 "code" => 3000,
@@ -61,7 +77,7 @@ class OrderService
             'task_id' => $taskID,
         ]);
 
-
+        $this->addLog($userId, $result->id, '创建工单');
         return [
             "code" => 0,
             "msg" => "success",
@@ -203,7 +219,7 @@ class OrderService
         Order::whereIn("id", $ids)->update(['is_enabled' => 0]);
     }
 
-    function editJob($id, $data)
+    function editJob($id, $data, $editUserId)
     {
         $order = Order::where("id", $id)->first();
         if (empty($order)) {
@@ -240,10 +256,12 @@ class OrderService
         $month = date('m', time());
         $day = date('d', time());
         $user = User::where('id', $order['user_id'])->first();
-        $order->file_path = $user->name . '/' . $year . '/' . $month . '/' . $day . '/' . $order->job_name;
+        $client = $user->name;
+
+        $order->file_path = $client . '/' . $year . '/' . $month . '/' . $day . '/' . $client . '-' . $order->job_name;
 
         $params = json_decode($order->order_detail, true);
-        $taskId = $this->afterCreateJob($params, $order->job_name,$user->name);
+        $taskId = $this->afterCreateJob($params, $order->job_name, $client);
 
         $order->task_id = $taskId;
         if (empty($taskId)) {
@@ -254,6 +272,7 @@ class OrderService
             ];
         }
         $order->save();
+        $this->addLog($editUserId, $id, "编辑工单");
         return [
             "code" => 0,
             "msg" => "success",
@@ -304,7 +323,17 @@ class OrderService
                 'message' => '用户不存在'
             ];
         }
-        $options["jobname"] = $user->name . "-" . $order->job_name;
+
+        if ($user->type == 2) {
+            $union = User::where('id', $user->union_id);
+            $client = $union->name;
+        }else{
+            $client = $user->name;
+        }
+
+
+        $options["jobname"] = $client . "-" . $order->job_name;
+
         $result = $this->get($urlArray['start_url'], $options);
         if (empty($result)) {
             return [

@@ -27,7 +27,7 @@ class OrderTemplateController
             "code" => $res["code"],
             "message" => $res["message"],
             "data" => $res['data'],
-            "user"=>$userId
+            "user" => $userId
         ]);
     }
 

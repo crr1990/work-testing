@@ -19,7 +19,15 @@ class OrderTemplateService
 {
     function lists($page, $number, $userId)
     {
-        $temps = $this->tempIdByUser($userId);
+        $user = User::where("id", $userId)->first();
+        if(empty($user)){
+            return ['code' => 3000, 'message' => '用户不存在', 'data' => []];
+        }
+        if ($user->type == 2) {
+            $user = User::where("union_id", $userId)->first();
+        }
+
+        $temps = $this->tempIdByUser($user->id);
         $total = OrderTemplate::where("is_enabled", 1)->count();
         $pages = ceil($total / $number);
         $offset = ($page - 1) * $number;
@@ -31,13 +39,10 @@ class OrderTemplateService
         }]);
 
 
-        if ($userId > 0) {
-            $user = User::where("id",$userId)->first();
-
-            if(!empty($user) && $user->type == 0) {
-                $query = $query->whereIn("id", $temps);
-            }
+        if (!empty($user) && $user->type != 1) {
+            $query = $query->whereIn("id", $temps);
         }
+
 
         $list = $query->where("is_enabled", 1)
             ->limit($number)

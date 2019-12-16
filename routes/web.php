@@ -32,7 +32,7 @@ $app->group(['prefix' => 'user', 'middleware' => 'auth:api'], function () use ($
     $app->post('list', 'UserController@userList');
     $app->post('info', 'UserController@userInfo');
     $app->post('delete', 'UserController@delete');
-
+    $app->post('mainUserList', 'UserController@getMainUserList');
 });
 
 $app->group(['prefix' => 'orderTemplate', 'middleware' => 'auth:api'], function () use ($app) {

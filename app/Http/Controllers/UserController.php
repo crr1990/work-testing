@@ -57,6 +57,7 @@ class UserController extends Controller
         $password = $request->input("password", "");
         $template = $request->input("template", "");
         $isEnabled = $request->input("isEnabled", 1);
+        $unionId = $request->input("unionId", 0);
 
         $validator = Validator::make($request->all(), [
             "name" => "required",
@@ -69,7 +70,7 @@ class UserController extends Controller
             ]);
         }
 
-        $res = (new UserInfoService())->register($name, $email, intval($allowCapacity), $desc, $password,$type,$template,$isEnabled);
+        $res = (new UserInfoService())->register($name, $email, intval($allowCapacity), $desc, $password, $type, $template, $isEnabled,$unionId);
 
         return response()->json([
             "code" => $res['code'],
@@ -143,7 +144,7 @@ class UserController extends Controller
             ]);
         }
         $response = $userInfoService->editUserInfo($name, $email,
-            $allowCapacity, $password, $isEnabled, $id,$template, $type);
+            $allowCapacity, $password, $isEnabled, $id, $template, $type);
 
         return response()->json($response);
     }
@@ -172,7 +173,8 @@ class UserController extends Controller
 
     }
 
-    public function delete(Request $request, UserInfoService $userInfoService) {
+    public function delete(Request $request, UserInfoService $userInfoService)
+    {
         $id = $request->input("id", "");
         $userId = $request->input("userId", "");
         if ($id == $userId) {
@@ -214,5 +216,16 @@ class UserController extends Controller
             ]);
         }
 
+    }
+
+    public function getMainUserList(Request $request, UserInfoService $userInfoService)
+    {
+        $name = $request->input("name", "");
+        $res = $userInfoService->getMainUserList($name);
+        return response()->json([
+            "code" => 0,
+            "data" => $res,
+            "message" => 'success'
+        ]);
     }
 }
