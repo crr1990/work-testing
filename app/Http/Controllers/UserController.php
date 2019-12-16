@@ -100,16 +100,16 @@ class UserController extends Controller
             ]);
         }
 
-        session_start();
-        if (!empty($_SESSION['code'])) {
-
-            if ($request->input("code") != $_SESSION['code']) {
-                return response()->json([
-                    "code" => 1005,
-                    "message" => "验证码错误"
-                ]);
-            }
-        }
+//        session_start();
+//        if (!empty($_SESSION['code'])) {
+//
+//            if ($request->input("code") != $_SESSION['code']) {
+//                return response()->json([
+//                    "code" => 1005,
+//                    "message" => "验证码错误"
+//                ]);
+//            }
+//        }
 
         $response = $userInfoService->login($name, $password);
         $response['cede'] = !empty($_SESSION['code']) ? $_SESSION['code'] : 0;
