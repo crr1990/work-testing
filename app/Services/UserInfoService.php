@@ -114,7 +114,7 @@ class UserInfoService
             "password" => md5($password),
             "type" => $type,
             "desc" => $desc,
-            "union_id" => unionId,
+            "union_id" => $unionId,
             "is_enabled" => $isEnabled
         ];
 
