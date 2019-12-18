@@ -9,6 +9,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\OrderTemplateService;
 use App\Services\UserInfoService;
 use Illuminate\Filesystem\Cache;
 use Illuminate\Http\Request;
@@ -145,7 +146,7 @@ class UserController extends Controller
             ]);
         }
         $response = $userInfoService->editUserInfo($name, $email,
-            $allowCapacity, $password, $isEnabled, $id, $template, $type,$unionId);
+            $allowCapacity, $password, $isEnabled, $id, $template, $type, $unionId);
 
         return response()->json($response);
     }
@@ -164,7 +165,20 @@ class UserController extends Controller
             ]);
         }
 
+
+
         $user = User::where('id', (int)$id)->first();
+        $userId = $user->id;
+        if ($user->type == 0) {
+            $user->child = User::where("union_id", $user->id)->where('is_del', 0)->pluck('name', 'id');
+
+        } elseif ($user->type == 2) {
+            $user->parent = User::where("id", $user->union_id)->where('is_del', 0)->select("id", "name")->first();
+            $userId = $user->union_id;
+        }
+
+        $user->template = (new OrderTemplateService())->tempIdByUser($userId);
+
         $response = [
             'code' => 0,
             'message' => 'success',
