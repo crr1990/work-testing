@@ -20,7 +20,7 @@ class OrderTemplateService
     function lists($page, $number, $userId)
     {
         $user = User::where("id", $userId)->first();
-        if(empty($user)){
+        if (empty($user)) {
             return ['code' => 3000, 'message' => '用户不存在', 'data' => []];
         }
         if ($user->type == 2) {
@@ -29,7 +29,11 @@ class OrderTemplateService
 
 
         $temps = $this->tempIdByUser($user->id);
-        $total = OrderTemplate::where("is_enabled", 1)->count();
+
+        $total = OrderTemplate::where("is_enabled", 1)
+            ->whereIn("id", $temps)
+            ->count();
+
         $pages = ceil($total / $number);
         $offset = ($page - 1) * $number;
 
