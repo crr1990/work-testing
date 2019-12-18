@@ -24,8 +24,9 @@ class OrderTemplateService
             return ['code' => 3000, 'message' => '用户不存在', 'data' => []];
         }
         if ($user->type == 2) {
-            $user = User::where("union_id", $userId)->first();
+            $user = User::where("id", $user->union_id)->first();
         }
+
 
         $temps = $this->tempIdByUser($user->id);
         $total = OrderTemplate::where("is_enabled", 1)->count();
