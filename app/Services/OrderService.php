@@ -59,14 +59,8 @@ class OrderService
 
         $path = $userName . '/' . $year . '/' . $month . '/' . $day . '/' . $userName . '-' . $jobName;
 
-        $taskID = $this->afterCreateJob($params, $jobName, $userName);
-        if (empty($taskID)) {
-            return [
-                "code" => 3000,
-                "msg" => "创建工单失败",
-                "data" => []
-            ];
-        }
+        $this->afterCreateJob($params, $jobName, $userName);
+
         $result = Order::create([
             "user_id" => $userId,
             "job_name" => $jobName,
@@ -74,14 +68,14 @@ class OrderService
             "client" => $client,
             "order_detail" => json_encode($params),
             'file_path' => $path,
-            'task_id' => $taskID,
+            'task_id' => 0,
         ]);
 
         $this->addLog($userId, $result->id, '创建工单');
         return [
             "code" => 0,
             "msg" => "success",
-            "data" => ['id' => $result->id, 'savePath' => $path, 'taskId' => $taskID]
+            "data" => ['id' => $result->id, 'savePath' => $path, 'taskId' => 0]
         ];
     }
 
@@ -134,11 +128,12 @@ class OrderService
         $options["user"] = $userName;
 
         $result = $this->get($urlArray['create_url'], $options);
+
         if (empty($result)) {
             return false;
         }
-        $result = $this->xmltoarr($result);
-        return substr(trim($result['response']), 7);
+        return $this->xmltoarr($result);
+        //return substr(trim($result['response']), 7);
     }
 
     function orderList($filter)
@@ -261,22 +256,15 @@ class OrderService
         $order->file_path = $client . '/' . $year . '/' . $month . '/' . $day . '/' . $client . '-' . $order->job_name;
 
         $params = json_decode($order->order_detail, true);
-        $taskId = $this->afterCreateJob($params, $order->job_name, $client);
+        $this->afterCreateJob($params, $order->job_name, $client);
 
-        $order->task_id = $taskId;
-        if (empty($taskId)) {
-            return [
-                "code" => 3000,
-                "msg" => "工单编辑，调用create服务失败",
-                "data" => []
-            ];
-        }
+        $order->task_id = 0;
         $order->save();
         $this->addLog($editUserId, $id, "编辑工单");
         return [
             "code" => 0,
             "msg" => "success",
-            "data" => ["savePath" => $order->file_path, "taskId" => $taskId]
+            "data" => ["savePath" => $order->file_path, "taskId" => $order->task_id]
         ];
     }
 
@@ -292,6 +280,7 @@ class OrderService
         ];
         try {
             $response = $client->request('GET', $url, $array);
+
             return $response->getBody()->getContents();
         } catch (\Exception $exception) {
             return null;
@@ -327,7 +316,7 @@ class OrderService
         if ($user->type == 2) {
             $union = User::where('id', $user->union_id);
             $client = $union->name;
-        }else{
+        } else {
             $client = $user->name;
         }
 
