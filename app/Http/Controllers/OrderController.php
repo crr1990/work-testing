@@ -127,7 +127,7 @@ class OrderController
     {
         $validator = Validator::make($request->all(), [
             "id" => "required",
-            "editUserId" => "required",
+            "userId" => "required",
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -136,7 +136,7 @@ class OrderController
             ]);
         }
 
-        $res = $service->editJob($request->get("id"), $request->all(),$request->get("editUserId"));
+        $res = $service->editJob($request->get("id"), $request->all(),$request->get("userId"));
         return response()->json([
             "code" => $res["code"],
             "message" => $res["msg"],
