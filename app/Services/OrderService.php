@@ -53,7 +53,7 @@ class OrderService
         $user = User::where('id', $userId)->first();
         $userName = $user->name;
         if ($user->type == 2) {
-            $union = User::where('id', $user->union_id);
+            $union = User::where('id', $user->union_id)->first();
             $userName = $union->name;
         }
 
@@ -316,7 +316,7 @@ class OrderService
         }
 
         if ($user->type == 2) {
-            $union = User::where('id', $user->union_id);
+            $union = User::where('id', $user->union_id)->first();
             $client = $union->name;
         } else {
             $client = $user->name;
