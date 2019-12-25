@@ -140,7 +140,9 @@ class OrderService
     {
         $order = Order::where("is_enabled", 1);
         if (isset($filter['userId']) && !empty($filter["userId"])) {
-            $order->where("user_id", $filter["userId"]);
+            $user = User::where("id",$filter["userId"])->first();
+            $uid = $user->union_id > 0 ? $user->union_id : $filter["userId"]
+            $order->where("user_id", $uid);
         }
 
         if (isset($filter['startTime']) && !empty($filter["startTime"])) {
