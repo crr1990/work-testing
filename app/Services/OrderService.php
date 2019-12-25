@@ -62,7 +62,7 @@ class OrderService
         $this->afterCreateJob($params, $jobName, $userName);
 
         $result = Order::create([
-            "user_id" => $user->type == 2 ? 1 : $user->type,
+            "user_id" => $user->type == 2 ? $user->union_id : $userId,
             "job_name" => $jobName,
             "temp_id" => $tempId,
             "client" => $client,
