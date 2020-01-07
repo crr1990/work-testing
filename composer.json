@@ -9,6 +9,7 @@
         "guzzlehttp/guzzle": "^6.4",
         "illuminate/mail": "^5.8",
         "laravel/lumen-framework": "5.8.*",
+        "openzipkin/zipkin": "^1.3",
         "peinhu/aetherupload-laravel": "~2.0",
         "tymon/jwt-auth": "^1.0.0-rc.2"
     },

@@ -59,7 +59,7 @@ class OrderService
 
         $path = $userName . '/' . $year . '/' . $month . '/' . $day . '/' . $userName . '-' . $jobName;
 
-        $this->afterCreateJob($params, $jobName, $userName);
+        $this->afterCreateJob($params, $jobName, $userName,$tempId);
 
         $result = Order::create([
             "user_id" => $user->type == 2 ? $user->union_id : $userId,
@@ -111,7 +111,7 @@ class OrderService
     }
 
 
-    public function afterCreateJob($params, $jobName, $userName)
+    public function afterCreateJob($params, $jobName, $userName, $tempId)
     {
         // 调用第三方创建工单数据
         // 获取调用地址
@@ -126,6 +126,7 @@ class OrderService
 
         $options["jobName"] = $userName . "-" . $jobName;
         $options["user"] = $userName;
+        $options["tempId"] = $tempId;
 
         $result = $this->get($urlArray['create_url'], $options);
 
@@ -258,7 +259,7 @@ class OrderService
         $order->file_path = $client . '/' . $year . '/' . $month . '/' . $day . '/' . $client . '-' . $order->job_name;
 
         $params = json_decode($order->order_detail, true);
-        $this->afterCreateJob($params, $order->job_name, $client);
+        $this->afterCreateJob($params, $order->job_name, $client,$order->temp_id);
 
         $order->task_id = 0;
         $order->save();

@@ -7,6 +7,12 @@
  */
 namespace App\Services;
 
+use Zipkin\Endpoint;
+use Zipkin\Reporters\Http;
+use Zipkin\Samplers\BinarySampler;
+use Zipkin\Tracing;
+use Zipkin\TracingBuilder;
+
 class Upload{
     private $filepath = './upload'; //上传目录
     private $tmpPath; //PHP文件临时目录
@@ -75,4 +81,23 @@ class Upload{
             return mkdir($this->filepath);
         }
     }
+
+
+    function test() {
+        $endpoint = Endpoint::create("test", "127.0.0.1", null, 2555);
+        $reporter = new Http(Http\CurlFactory::create());
+        $sampler = BinarySampler::createAsAlwaysSample();
+        $tracing = TracingBuilder::create()
+            ->havingLocalEndpoint($endpoint)
+            ->havingSampler($sampler)
+            ->havingReporter($reporter)
+            ->build();
+        $trace = $tracing->getTracer();
+        $span = $trace->newTrace();
+        $span->setName("test");
+        $span->start();
+        $span->finish();
+
+    }
+
 }
